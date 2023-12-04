@@ -1,1 +1,4 @@
 firewallRuleConfig.py
+*.ipynb
+**/*.pyc
+tester.py

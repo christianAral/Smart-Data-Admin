@@ -1,0 +1,2 @@
+def DotDict():
+    return type('', (), {})()
