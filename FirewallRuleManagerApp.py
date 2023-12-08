@@ -21,10 +21,11 @@ def refreshRules():
                     resp = {'message':'Nothing to see here!'}
                     return jsonify(resp),200
             case "POST":
-                    data = request.get_json()
+                    # data = request.get_json()
+                    data = request.json
                     print(data)
                     # resp = {'message':f'looks good to me! this is what we received: {data}'}
-                    resp = {'message':f'looks good to me!'}
+                    resp = {'message':f'looks good to me! this is what we received: {data}'}
                     return jsonify(resp),200
             case "PUT":
                     data = request.get_json()
