@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Smart Data Admin Tool</title>
@@ -7,10 +8,30 @@
 </head>
 
 <body>
-    <span style="background-color: black;color: limegreen;">Here is your body</span>
+  <span style="background-color: black;color: limegreen;">Here is your body</span>
 
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js'></script>
-    <!-- <script src="./script.js"></script> -->
-    <script src="./server.js"></script>
+  </br>
+  <h1>Current Rules</h1>
+  <table id="currentRules">
+    <thead><td>ID</td><td>Name</td></thead>
+    <tbody></tbody>
+  </table>
+  </br>
+  <h1>Rules to Add</h1>
+  <table id="newRules">
+    <thead><td>ID</td><td>Name</td></thead>
+    <tbody></tbody>
+  </table>
+  </br>
+  <h1>Rules to Delete</h1>
+  <table id="trashedRules">
+    <thead><td>ID</td><td>Name</td></thead>
+    <tbody></tbody>
+  </table>
+
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js'></script>
+  <!-- <script src="./script.js"></script> -->
+  <script src="./server.js"></script>
 </body>
+
 </html>
