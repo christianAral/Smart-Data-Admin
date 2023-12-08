@@ -38,9 +38,14 @@ def refreshRules():
 @app.route('/refreshFirewallRules',methods=['GET'])
 def refresh_Firewall_Rules():
     try:
-        AzFRM.load_firewall_rules()
-        resp = {'message':'The '}
-        return jsonify(resp),200
+        param1 = request.args.get('refresh',True)
+        rules = AzFRM.get_firewall_rules(refresh=param1)
+        rules = [{
+                'name':r.name,
+                'start':r.start_ip_address,
+                'end':r.end_ip_address
+                } for r in rules]
+        return jsonify(rules),200
     except Exception as e:
         return jsonify(e), 500
 
