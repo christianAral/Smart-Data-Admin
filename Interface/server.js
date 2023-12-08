@@ -12,7 +12,7 @@ sc.service.request = function(endpoint,method,data={},callback=()=>{}) {
     }).done(
         (data) => {callback(data)}
     ).fail(
-        (err) => {alert(err)}
+        (err) => {alert(JSON.stringify(err))}
     )
 
 }
