@@ -1,5 +1,6 @@
 const sc = {
-    service:{}
+    service:{},
+    server:{}
 };
 
 sc.service.request = function(endpoint,method,data={},callback=()=>{}) {
@@ -15,4 +16,19 @@ sc.service.request = function(endpoint,method,data={},callback=()=>{}) {
         (err) => {alert(JSON.stringify(err))}
     )
 
+}
+
+sc.server.refreshFirewallRules = function() {
+    const contentType = 'application/json';
+    $.ajax({
+        url:'/refreshFirewallRules',
+        method:'GET',
+        contentType:contentType,
+    }).done((data) => {
+        const currRulesBody = $('table#currentRules>tbody');
+        bodyContent = data.map((e) => { return `<tr><td>${e.name}</td><td>${e.start}</td><td>${e.end}</td></tr>` })
+            .sort((a,b) => a.localeCompare(b)).join('');
+
+        currRulesBody.html(bodyContent)
+    });
 }
