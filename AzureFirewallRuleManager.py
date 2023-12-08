@@ -29,17 +29,21 @@ class FirewallRuleManager(InteractiveBrowserCredential):
         self._curr_firewall = []
         self._curr_baseline = []
 
-    def load_firewall_rules(self):
-        self._curr_firewall = list(self._sql_client.firewall_rules.list_by_server(
-            self._resource_group_name, self._server_name
-        )) 
+    def get_firewall_rules(self,refresh=True):
+        if refresh==True or not hasattr(self,'_curr_firewall'):
+            self._curr_firewall = list(self._sql_client.firewall_rules.list_by_server(
+                self._resource_group_name, self._server_name
+            ))
+        return self._curr_firewall
     
-    def load_baseline_rules(self):
-        self._curr_baseline = self._sql_client.database_vulnerability_assessment_rule_baselines.get(
-            resource_group_name=self._resource_group_name,
-            server_name=self._server_name,
-            database_name="master",
-            vulnerability_assessment_name="VA2065",
-            rule_id="VA2065",
-            baseline_name="default",
-        )
+    def get_baseline_rules(self,refresh=True):
+        if refresh==True or not hasattr(self,'_curr_baseline'):
+            self._curr_baseline = self._sql_client.database_vulnerability_assessment_rule_baselines.get(
+                resource_group_name=self._resource_group_name,
+                server_name=self._server_name,
+                database_name="master",
+                vulnerability_assessment_name="VA2065",
+                rule_id="VA2065",
+                baseline_name="default",
+            )
+        return self._curr_baseline
