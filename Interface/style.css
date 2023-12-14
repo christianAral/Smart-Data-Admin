@@ -18,6 +18,10 @@
     background-color: var(--update-bg);
 }
 
+.ruleName {
+    width: 30em;
+}
+
 button {
     color: initial;
     background-color: initial;

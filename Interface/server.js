@@ -24,7 +24,7 @@ sc.service.request = function(endpoint,method,data={},callback=()=>{}) {
 sc.service.DOMHandlers.createTableRow = function(ipName,ipStart,ipEnd) {
     const uuid = crypto.randomUUID();
     let tds = [
-        `<td><input class='ruleData' onfocusout='sc.service.events.ruleUpdated(this)' value='${ipName}' data-orig='${ipName}' /></td>`,
+        `<td><input class='ruleData ruleName' onfocusout='sc.service.events.ruleUpdated(this)' value='${ipName}' data-orig='${ipName}' /></td>`,
         `<td><input class='ruleData' onfocusout='sc.service.events.ruleUpdated(this)' value='${ipStart}' data-orig='${ipStart}'/></td>`,
         `<td><input class='ruleData' onfocusout='sc.service.events.ruleUpdated(this)' value='${ipEnd}' data-orig='${ipEnd}'/></td>`,
         '<td><button onclick="sc.service.DOMHandlers.resetRow(this)">Reset</button></td>'
