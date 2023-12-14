@@ -1,3 +1,8 @@
 * {
     font-family: consolas;
+    color: inherit;
+}
+
+.changedRow {
+    color: red;
 }

@@ -1,5 +1,8 @@
 const sc = {
-    service:{DOMHandlers:{}},
+    service:{
+        DOMHandlers:{},
+        events:{}
+    },
     server:{}
 };
 
@@ -19,14 +22,25 @@ sc.service.request = function(endpoint,method,data={},callback=()=>{}) {
 }
 
 sc.service.DOMHandlers.createTableRow = function(ipName,ipStart,ipEnd) {
+    const uuid = crypto.randomUUID();
     let tds = [
-        `<td>${e.name}</td>`,
-        `<td>${e.start}</td>`,
-        `<td>${e.end}</td>`
+        `<td><input class='ruleData' onfocusout='sc.service.events.ruleUpdated(this)' value='${ipName}' data-orig='${ipName}'></td>`,
+        `<td><input class='ruleData' onfocusout='sc.service.events.ruleUpdated(this)' value='${ipStart}' data-orig='${ipStart}'</td>`,
+        `<td><input class='ruleData' onfocusout='sc.service.events.ruleUpdated(this)' value='${ipEnd}' data-orig='${ipEnd}'</td>`
     ];
     const tr = `<tr>${tds.join('')}</tr>`
 
     return tr
+}
+
+sc.service.events.ruleUpdated = function(evt) {
+    const tr = $(evt).parent().parent();
+
+    if (evt.dataset.orig == evt.value) {
+        tr.removeClass('changedRow');        
+    } else {
+        tr.addClass('changedRow');
+    }
 }
 
 sc.server.refreshFirewallRules = function() {
