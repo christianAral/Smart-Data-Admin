@@ -1,8 +1,24 @@
+:root {
+    --update-fg: #9C5700;
+    --update-bg: #FFEB9C; 
+    --add-fg: #006100;
+    --add-bg: #C6EFCE;
+    --del-fg: #9C0006;
+    --del-bg: #FFC7CE;
+}
+
 * {
     font-family: consolas;
     color: inherit;
+    background-color: inherit;
 }
 
 .changedRow {
-    color: red;
+    color: var(--update-fg);
+    background-color: var(--update-bg);
+}
+
+button {
+    color: initial;
+    background-color: initial;
 }
