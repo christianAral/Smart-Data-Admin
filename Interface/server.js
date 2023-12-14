@@ -27,7 +27,7 @@ sc.service.DOMHandlers.createTableRow = function(ipName,ipStart,ipEnd) {
         `<td><input class='ruleData ruleName' onfocusout='sc.service.events.ruleUpdated(this)' value='${ipName}' data-orig='${ipName}' /></td>`,
         `<td><input class='ruleData' onfocusout='sc.service.events.ruleUpdated(this)' value='${ipStart}' data-orig='${ipStart}'/></td>`,
         `<td><input class='ruleData' onfocusout='sc.service.events.ruleUpdated(this)' value='${ipEnd}' data-orig='${ipEnd}'/></td>`,
-        '<td><button onclick="sc.service.DOMHandlers.resetRow(this)">Reset</button></td>'
+        '<td><button onclick="sc.service.DOMHandlers.resetRow(this)" disabled>Reset</button></td>'
     ];
     const tr = `<tr>${tds.join('')}</tr>`
 
@@ -45,14 +45,32 @@ sc.service.DOMHandlers.resetRow = function(evt) {
     tr.removeClass('changedRow');
 };
 
+sc.service.DOMHandlers.checkRowChangedState = function(tr) {
+    const inputs = tr.find('input');
+    const button = tr.find('button');
+
+    let allMatch = true;
+
+    inputs.each(function() {
+        if ($(this).val() !== $(this).data('orig')) {
+            allMatch = false;
+            return false;
+        } 
+    });
+
+    if (allMatch) {
+        tr.removeClass('changedRow');
+        tr.find('button').prop('disabled',true);
+    } else {
+        tr.addClass('changedRow');
+        tr.find('button').prop('disabled',false);
+    }
+};
+
 sc.service.events.ruleUpdated = function(evt) {
     const tr = $(evt).closest('tr');
 
-    if (evt.dataset.orig == evt.value) {
-        tr.removeClass('changedRow');        
-    } else {
-        tr.addClass('changedRow');
-    }
+    sc.service.DOMHandlers.checkRowChangedState(tr);
 };
 
 sc.server.refreshFirewallRules = function() {
