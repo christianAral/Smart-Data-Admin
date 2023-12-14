@@ -1,5 +1,5 @@
 const sc = {
-    service:{},
+    service:{DOMHandlers:{}},
     server:{}
 };
 
@@ -18,6 +18,17 @@ sc.service.request = function(endpoint,method,data={},callback=()=>{}) {
 
 }
 
+sc.service.DOMHandlers.createTableRow = function(ipName,ipStart,ipEnd) {
+    let tds = [
+        `<td>${e.name}</td>`,
+        `<td>${e.start}</td>`,
+        `<td>${e.end}</td>`
+    ];
+    const tr = `<tr>${tds.join('')}</tr>`
+
+    return tr
+}
+
 sc.server.refreshFirewallRules = function() {
     const contentType = 'application/json';
     $.ajax({
@@ -26,7 +37,7 @@ sc.server.refreshFirewallRules = function() {
         contentType:contentType,
     }).done((data) => {
         const currRulesBody = $('table#currentRules>tbody');
-        bodyContent = data.map((e) => { return `<tr><td>${e.name}</td><td>${e.start}</td><td>${e.end}</td></tr>` })
+        bodyContent = data.map((e) => { return sc.service.DOMHandlers.createTableRow(e.name,e.start,e.end); })
             .sort((a,b) => a.localeCompare(b)).join('');
 
         currRulesBody.html(bodyContent)
