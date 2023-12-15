@@ -6,6 +6,7 @@ try:
     from DotDict import DotDict as DD
     from dataclasses import dataclass
     from azure.identity import InteractiveBrowserCredential
+    from azure.core.exceptions import HttpResponseError
     from azure.mgmt.sql import SqlManagementClient
     from azure.mgmt.sql.models import (
         FirewallRule,
@@ -44,16 +45,93 @@ class FirewallRuleManager(InteractiveBrowserCredential):
                 database_name="master",
                 vulnerability_assessment_name="VA2065",
                 rule_id="VA2065",
-                baseline_name="default",
+                baseline_name="default"
             )
+            self._updated_baseline = [r for r in self._curr_baseline.baseline_results]
+        
         return self._curr_baseline
     
+    def set_baseline_rules(self):
+        updateRules = [r.as_dict() for r in self._updated_baseline]
+        self._curr_baseline = self._sql_client.database_vulnerability_assessment_rule_baselines.create_or_update(
+            resource_group_name=self._resource_group_name,
+            server_name=self._server_name,
+            database_name="master",
+            vulnerability_assessment_name="VA2065",
+            rule_id="VA2065",
+            baseline_name="default",
+                        parameters=DatabaseVulnerabilityAssessmentRuleBaseline(
+                baseline_results=updateRules
+            )
+        )
+    
     def update_rules(self,instructions):
-        resp = {'message':(
-             f'Instructions received. '
-             f'Add {len(instructions["addedRow"])} rows. '
-             f'Update {len(instructions["changedRow"])} rows. '
-             f'Removed {len(instructions["deletedRow"])} rows.'
-        )}
+        self.get_baseline_rules(True)
+        resp = {
+            'instructions': {
+                'add':len(instructions['addedRow']),
+                'update':len(instructions['changedRow']),
+                'remove':len(instructions['deletedRow'])
+            },
+            'success': {
+                'add':0,
+                'update':0,
+                'remove':0
+            },
+            'failure': {
+                'add':0,
+                'update':0,
+                'remove':0
+            }
+        }
+
+        for instr in instructions['deletedRow']:
+            try:
+                print(f'deleting the {instr["key"]} rule!')
+                self._sql_client.firewall_rules.delete(
+                    self._resource_group_name, 
+                    self._server_name,
+                    instr['key']
+                )
+
+                self._updated_baseline = [
+                    r for r in self._updated_baseline if r.result[0] != instr["key"]
+                ]
+                resp['success']['remove'] += 1
+            except HttpResponseError:
+                resp['failure']['remove'] += 1
+
+        for instr in instructions['addedRow']:
+            try:
+                print(f'adding the {instr["key"]} rule!')
+                firewall_rule_parameters = FirewallRule(
+                    start_ip_address=instr['start'], 
+                    end_ip_address=instr['end']
+                )
+                self._sql_client.firewall_rules.create_or_update(
+                    self._resource_group_name,
+                    self._server_name,
+                    instr['name'],
+                    parameters=firewall_rule_parameters,
+                )
+
+                new_baseline_item = DatabaseVulnerabilityAssessmentRuleBaselineItem(
+                    result=[instr['name'], instr['start'], instr['end']]
+                )
+                self._updated_baseline.append(new_baseline_item)
+                resp['success']['add'] += 1
+            except HttpResponseError:
+                resp['failure']['add'] += 1
+
+        for instr in instructions['changedRow']:
+            try:
+                print(f'updating the {instr["key"]} rule!')
+                resp['success']['update'] += 1
+            except HttpResponseError:
+                resp['failure']['update'] += 1
+
+        print('setting baseline')
+        self.set_baseline_rules()
+        print('baseline set successfully')
 
         return resp
