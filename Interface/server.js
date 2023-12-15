@@ -26,15 +26,26 @@ sc.service.isValidIPV4 = function(input) {
     return ipv4Pattern.test(input);
 }
 
-sc.service.DOMHandlers.createTableRow = function(ipName,ipStart,ipEnd) {
+sc.service.DOMHandlers.createTableRow = function(ipName,ipStart,ipEnd,isNewRow=false) {
     const uuid = crypto.randomUUID();
+
+    const buttonSetExisting = [
+        `<td><button class='resetBtn' onclick="sc.service.DOMHandlers.resetRow(this)" disabled>Reset</button>`,
+        `<button class='deleteBtn' onclick="sc.service.DOMHandlers.toggleDelete(this)">Toggle Delete</button></td>`
+    ];
+
+    const buttonSetNew = [
+        `<td><button class='removeBtn' onclick="sc.service.DOMHandlers.removeRow(this)">Remove Row</button></td>`,
+    ];
+
     let tds = [
         `<td><input class='ruleData ruleName' onfocusout='sc.service.events.inputLoseFocus(this)' value='${ipName}' data-orig='${ipName}' /></td>`,
         `<td><input class='ruleData' onfocusin='sc.service.events.inputGainFocus(this,"ip")' onfocusout='sc.service.events.inputLoseFocus(this,"ip")' value='${ipStart}' data-orig='${ipStart}'/></td>`,
-        `<td><input class='ruleData' onfocusin='sc.service.events.inputGainFocus(this,"ip")' onfocusout='sc.service.events.inputLoseFocus(this,"ip")' value='${ipEnd}' data-orig='${ipEnd}'/></td>`,
-        `<td><button class='resetBtn' onclick="sc.service.DOMHandlers.resetRow(this)" disabled>Reset</button></td>`,
-        `<td><button class='deleteBtn' onclick="sc.service.DOMHandlers.toggleDelete(this)">Toggle Delete</button></td>`
+        `<td><input class='ruleData' onfocusin='sc.service.events.inputGainFocus(this,"ip")' onfocusout='sc.service.events.inputLoseFocus(this,"ip")' value='${ipEnd}' data-orig='${ipEnd}'/></td>`
     ];
+
+    if (isNewRow) { tds.push(...buttonSetNew)      }
+    else          { tds.push(...buttonSetExisting) }
     const tr = `<tr>${tds.join('')}</tr>`
 
     return tr
@@ -50,6 +61,11 @@ sc.service.DOMHandlers.resetRow = function(evt) {
 
     sc.service.DOMHandlers.updateRowState(tr);
 };
+
+sc.service.DOMHandlers.removeRow = function(evt) {
+    const tr = $(evt).closest('tr');
+    tr.remove();
+}
 
 sc.service.DOMHandlers.toggleDelete = function(evt) {
     const tr = $(evt).closest('tr');
