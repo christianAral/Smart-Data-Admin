@@ -23,7 +23,7 @@ sc.service.request = function(endpoint,method,data={},callback=()=>{}) {
 
 sc.service.isValidIPV4 = function(input) {
     var ipv4Pattern = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
-    return ipv4Pattern.test(input);
+    return ipv4Pattern.test(input) || input == '' || input === undefined;
 }
 
 sc.service.DOMHandlers.createTableRow = function(ipName,ipStart,ipEnd,isNewRow=false) {
@@ -50,6 +50,14 @@ sc.service.DOMHandlers.createTableRow = function(ipName,ipStart,ipEnd,isNewRow=f
 
     return tr
 };
+
+sc.service.DOMHandlers.addNewRule = function() {
+    const tbody = $('table#currentRules').find('tbody');
+    const tr = $(sc.service.DOMHandlers.createTableRow('','','',true));
+
+    sc.service.DOMHandlers.updateRowState(tr,'addedRow')
+    tbody.prepend(tr);
+}
 
 sc.service.DOMHandlers.resetRow = function(evt) {
     const tr = $(evt).closest('tr');
@@ -123,6 +131,9 @@ sc.service.DOMHandlers.updateRowState = (tr, state) => {
     const states = ['changedRow', 'deletedRow', 'addedRow'];
     const inputs = tr.find('input');
     const button = tr.find('button.resetBtn');
+
+    // don't do anything else if the state is already set as addedRow
+    if (tr.data('state') == 'addedRow') { return true }
 
     states.forEach((s) => tr.removeClass(s));
 
