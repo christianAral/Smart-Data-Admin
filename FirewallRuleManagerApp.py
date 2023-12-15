@@ -48,6 +48,21 @@ def refresh_Firewall_Rules():
         return jsonify(rules),200
     except Exception as e:
         return jsonify(e), 500
+    
+@app.route('/updateFirewallRules',methods=['POST'])
+def update_Firewall_Rules():
+    try:
+        data = request.json
+        # Placeholder for a function that will handle processing all requested rules
+        resp = {'message':(
+             f'Instructions received. '
+             f'Add {len(data["addedRow"])} rows. '
+             f'Update {len(data["changedRow"])} rows. '
+             f'Removed {len(data["deletedRow"])} rows.'
+        )}
+        return jsonify(resp),200
+    except Exception as e:
+        return jsonify(e), 500
 
 if __name__ == '__main__':
     AzFRM = FirewallRuleManager()

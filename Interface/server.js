@@ -187,7 +187,7 @@ sc.server.refreshFirewallRules = function() {
 
 sc.server.commitFirewallRules = function() {
     const states = ['changedRow', 'deletedRow', 'addedRow'];
-
+    const contentType = 'application/json';
     const payload = {};
 
     states.forEach((s) => {
@@ -204,9 +204,18 @@ sc.server.commitFirewallRules = function() {
         }).get()
     });
 
-    console.log("AJAX to send payload to server.");
     // debugging
     sc.payload = payload;
+    console.log("AJAX to send payload to server.");
+
+    $.ajax({
+        url:'/updateFirewallRules',
+        method:'POST',
+        contentType:contentType,
+        data:JSON.stringify(payload)
+    }).done((data) => {
+        console.log(JSON.stringify(data))
+    });
 };
 
 
