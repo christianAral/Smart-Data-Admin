@@ -21,12 +21,17 @@ sc.service.request = function(endpoint,method,data={},callback=()=>{}) {
 
 };
 
+sc.service.isValidIPV4 = function(input) {
+    var ipv4Pattern = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+    return ipv4Pattern.test(input);
+}
+
 sc.service.DOMHandlers.createTableRow = function(ipName,ipStart,ipEnd) {
     const uuid = crypto.randomUUID();
     let tds = [
-        `<td><input class='ruleData ruleName' onfocusout='sc.service.events.ruleUpdated(this)' value='${ipName}' data-orig='${ipName}' /></td>`,
-        `<td><input class='ruleData' onfocusout='sc.service.events.ruleUpdated(this)' value='${ipStart}' data-orig='${ipStart}'/></td>`,
-        `<td><input class='ruleData' onfocusout='sc.service.events.ruleUpdated(this)' value='${ipEnd}' data-orig='${ipEnd}'/></td>`,
+        `<td><input class='ruleData ruleName' onfocusout='sc.service.events.inputLoseFocus(this)' value='${ipName}' data-orig='${ipName}' /></td>`,
+        `<td><input class='ruleData' onfocusin='sc.service.events.inputGainFocus(this,"ip")' onfocusout='sc.service.events.inputLoseFocus(this,"ip")' value='${ipStart}' data-orig='${ipStart}'/></td>`,
+        `<td><input class='ruleData' onfocusin='sc.service.events.inputGainFocus(this,"ip")' onfocusout='sc.service.events.inputLoseFocus(this,"ip")' value='${ipEnd}' data-orig='${ipEnd}'/></td>`,
         `<td><button class='resetBtn' onclick="sc.service.DOMHandlers.resetRow(this)" disabled>Reset</button></td>`,
         `<td><button class='deleteBtn' onclick="sc.service.DOMHandlers.toggleDelete(this)">Toggle Delete</button></td>`
     ];
@@ -76,6 +81,29 @@ sc.service.DOMHandlers.checkRowChangedState = function(tr) {
     }
 };
 
+sc.service.DOMHandlers.inputGainFocus = function(inp,type) {
+    const input = $(inp);
+
+    if (type == 'ip') {
+        input.data('latest',input.val());
+    }
+}
+
+sc.service.DOMHandlers.inputLoseFocus = function(inp,type) {
+    const input = $(inp);
+    const tr = tr.closest('tr');
+
+    if (type == 'ip') {
+        if (!sc.service.isValidIPV4(input.val())) {
+            alert("That's not a valid IPV4, must be in format 111.222.333.444!");
+            input.val(input.data('latest'));
+            return false;
+        }
+    }
+
+    sc.service.DOMHandlers.checkRowChangedState(tr);
+}
+
 sc.service.DOMHandlers.updateRowState = (tr, state) => {
     const states = ['changedRow', 'deletedRow', 'addedRow'];
     const inputs = tr.find('input');
@@ -104,12 +132,6 @@ sc.service.DOMHandlers.updateRowState = (tr, state) => {
         inputs.each(function() { $(this).prop('disabled',false); });
         button.prop('disabled',true);
     }
-};
-
-sc.service.events.ruleUpdated = function(evt) {
-    const tr = $(evt).closest('tr');
-
-    sc.service.DOMHandlers.checkRowChangedState(tr);
 };
 
 sc.server.refreshFirewallRules = function() {
