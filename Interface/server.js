@@ -88,10 +88,10 @@ sc.service.DOMHandlers.removeRow = function(evt) {
 sc.service.DOMHandlers.toggleDelete = function(evt) {
     const tr = $(evt).closest('tr');
   
-    if (tr.data('state') != 'deletedRow') {
+    if (!tr.hasClass('deletedRow')) {
         sc.service.DOMHandlers.updateRowState(tr,'deletedRow');
     } else {
-        sc.service.DOMHandlers.updateRowState(tr);
+        sc.service.DOMHandlers.checkRowChangedState(tr);
     }
 
 };
@@ -147,28 +147,24 @@ sc.service.DOMHandlers.updateRowState = (tr, state) => {
     const button = tr.find('button.resetBtn');
 
     // don't do anything else if the state is already set as addedRow
-    if (tr.data('state') == 'addedRow') { return true }
+    if (tr.hasClass('addedRow')) { return true }
 
     states.forEach((s) => tr.removeClass(s));
 
     if (state == 'changedRow') {
         // enable reset button
-        tr.data('state',state);
         tr.addClass(state);
         button.prop('disabled',false);
     } else if (state == 'deletedRow') { 
         // disable inputs and enable reset button
-        tr.data('state',state);
         tr.addClass(state);
         inputs.each(function() { $(this).prop('disabled',true); });
         button.prop('disabled',false);
     } else if (state == 'addedRow') {
-        tr.data('state',state);
         tr.addClass(state);
 
     } else { 
         // enable inputs and disable the reset button 
-        tr.removeData('state');
         inputs.each(function() { $(this).prop('disabled',false); });
         button.prop('disabled',true);
     }
