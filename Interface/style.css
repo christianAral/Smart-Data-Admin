@@ -13,17 +13,17 @@
     background-color: inherit;
 }
 
-.changedRow {
+.changedRow > td > input {
     color: var(--update-fg);
     background-color: var(--update-bg);
 }
 
-.deletedRow {
+.deletedRow > td > input {
     color: var(--del-fg);
     background-color: var(--del-bg);
 }
 
-.addedRow {
+.addedRow > td > input {
     color: var(--add-fg);
     background-color: var(--add-bg);
 }
@@ -35,4 +35,8 @@
 button {
     color: initial;
     background-color: initial;
+}
+
+.removeBtn {
+    width: 100%;
 }
