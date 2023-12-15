@@ -27,7 +27,8 @@ sc.service.DOMHandlers.createTableRow = function(ipName,ipStart,ipEnd) {
         `<td><input class='ruleData ruleName' onfocusout='sc.service.events.ruleUpdated(this)' value='${ipName}' data-orig='${ipName}' /></td>`,
         `<td><input class='ruleData' onfocusout='sc.service.events.ruleUpdated(this)' value='${ipStart}' data-orig='${ipStart}'/></td>`,
         `<td><input class='ruleData' onfocusout='sc.service.events.ruleUpdated(this)' value='${ipEnd}' data-orig='${ipEnd}'/></td>`,
-        '<td><button onclick="sc.service.DOMHandlers.resetRow(this)" disabled>Reset</button></td>'
+        '<td><button onclick="sc.service.DOMHandlers.resetRow(this)" disabled>Reset</button></td>',
+        '<td><button onclick="sc.service.DOMHandlers.toggleDelete(this)">Toggle Delete</button></td>'
     ];
     const tr = `<tr>${tds.join('')}</tr>`
 
@@ -42,7 +43,21 @@ sc.service.DOMHandlers.resetRow = function(evt) {
         $(this).val($(this).data('orig'));
     });
 
-    tr.removeClass('changedRow');
+    sc.service.DOMHandlers.updateRowState(tr);
+};
+
+sc.service.DOMHandlers.toggleDelete = function(evt) {
+    const tr = $(evt).closest('tr');
+    const inputs = tr.find('input');
+  
+    if (tr.data('state') === undefined) {
+        tr.data('state','delete');
+        sc.service.DOMHandlers.updateRowState(tr,'deletedRow');
+    } else {
+        tr.removeData('state');
+        sc.service.DOMHandlers.updateRowState(tr);
+    }
+
 };
 
 sc.service.DOMHandlers.checkRowChangedState = function(tr) {
@@ -59,11 +74,21 @@ sc.service.DOMHandlers.checkRowChangedState = function(tr) {
     });
 
     if (allMatch) {
-        tr.removeClass('changedRow');
-        tr.find('button').prop('disabled',true);
+        sc.service.DOMHandlers.updateRowState(tr);
+        button.prop('disabled',true);
     } else {
-        tr.addClass('changedRow');
-        tr.find('button').prop('disabled',false);
+        sc.service.DOMHandlers.updateRowState(tr,'changedRow');
+        button.prop('disabled',false);
+    }
+};
+
+sc.service.DOMHandlers.updateRowState = (tr, state) => {
+    const states = ['changedRow', 'deletedRow', 'addedRow'];
+
+    states.forEach((s) => tr.removeClass(s));
+
+    if (states.includes(state)) {
+        tr.addClass(state);
     }
 };
 
