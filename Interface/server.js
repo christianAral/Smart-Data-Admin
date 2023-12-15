@@ -26,6 +26,16 @@ sc.service.isValidIPV4 = function(input) {
     return ipv4Pattern.test(input) || input == '' || input === undefined;
 }
 
+sc.service.isValidRuleName = function() {
+    var ruleNames = $('input.ruleName').map(function() {
+        return $(this).val();
+    }).get();
+    
+    var uniqueRuleNames = new Set(ruleNames);
+    
+    return (uniqueRuleNames.size === ruleNames.length)
+}
+
 sc.service.DOMHandlers.createTableRow = function(ipName,ipStart,ipEnd,isNewRow=false) {
     const uuid = crypto.randomUUID();
 
@@ -39,9 +49,9 @@ sc.service.DOMHandlers.createTableRow = function(ipName,ipStart,ipEnd,isNewRow=f
     ];
 
     let tds = [
-        `<td><input class='ruleData ruleName' onfocusout='sc.service.events.inputLoseFocus(this)' value='${ipName}' data-orig='${ipName}' /></td>`,
-        `<td><input class='ruleData' onfocusin='sc.service.events.inputGainFocus(this,"ip")' onfocusout='sc.service.events.inputLoseFocus(this,"ip")' value='${ipStart}' data-orig='${ipStart}'/></td>`,
-        `<td><input class='ruleData' onfocusin='sc.service.events.inputGainFocus(this,"ip")' onfocusout='sc.service.events.inputLoseFocus(this,"ip")' value='${ipEnd}' data-orig='${ipEnd}'/></td>`
+        `<td><input class='ruleData ruleName' onfocusin='sc.service.events.inputGainFocus(this)' onfocusout='sc.service.events.inputLoseFocus(this,"name")' value='${ipName}' data-orig='${ipName}' /></td>`,
+        `<td><input class='ruleData' onfocusin='sc.service.events.inputGainFocus(this)' onfocusout='sc.service.events.inputLoseFocus(this,"ip")' value='${ipStart}' data-orig='${ipStart}'/></td>`,
+        `<td><input class='ruleData' onfocusin='sc.service.events.inputGainFocus(this)' onfocusout='sc.service.events.inputLoseFocus(this,"ip")' value='${ipEnd}' data-orig='${ipEnd}'/></td>`
     ];
 
     if (isNewRow) { tds.push(...buttonSetNew)      }
@@ -105,11 +115,9 @@ sc.service.DOMHandlers.checkRowChangedState = function(tr) {
     }
 };
 
-sc.service.events.inputGainFocus = function(inp,type) {
+sc.service.events.inputGainFocus = function(inp) {
     const input = $(inp);
-    if (type == 'ip') {
-        input.data('latest',input.val());
-    }
+    input.data('latest',input.val());
 }
 
 sc.service.events.inputLoseFocus = function(inp,type) {
@@ -119,6 +127,12 @@ sc.service.events.inputLoseFocus = function(inp,type) {
     if (type == 'ip') {
         if (!sc.service.isValidIPV4(input.val())) {
             alert("That's not a valid IPV4, must be in format 111.222.333.444!");
+            input.val(input.data('latest'));
+            return false;
+        }
+    } else if (type == 'name') {
+        if (!sc.service.isValidRuleName()) {
+            alert("It looks like that rule name is already in use! Please use something else.");
             input.val(input.data('latest'));
             return false;
         }
