@@ -18,6 +18,16 @@
     background-color: var(--update-bg);
 }
 
+.deletedRow {
+    color: var(--del-fg);
+    background-color: var(--del-bg);
+}
+
+.addedRow {
+    color: var(--add-fg);
+    background-color: var(--add-bg);
+}
+
 .ruleName {
     width: 30em;
 }
