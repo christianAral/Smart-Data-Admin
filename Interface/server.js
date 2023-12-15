@@ -81,17 +81,16 @@ sc.service.DOMHandlers.checkRowChangedState = function(tr) {
     }
 };
 
-sc.service.DOMHandlers.inputGainFocus = function(inp,type) {
+sc.service.events.inputGainFocus = function(inp,type) {
     const input = $(inp);
-
     if (type == 'ip') {
         input.data('latest',input.val());
     }
 }
 
-sc.service.DOMHandlers.inputLoseFocus = function(inp,type) {
+sc.service.events.inputLoseFocus = function(inp,type) {
     const input = $(inp);
-    const tr = tr.closest('tr');
+    const tr = input.closest('tr');
 
     if (type == 'ip') {
         if (!sc.service.isValidIPV4(input.val())) {
