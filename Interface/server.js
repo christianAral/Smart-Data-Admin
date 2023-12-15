@@ -27,8 +27,8 @@ sc.service.DOMHandlers.createTableRow = function(ipName,ipStart,ipEnd) {
         `<td><input class='ruleData ruleName' onfocusout='sc.service.events.ruleUpdated(this)' value='${ipName}' data-orig='${ipName}' /></td>`,
         `<td><input class='ruleData' onfocusout='sc.service.events.ruleUpdated(this)' value='${ipStart}' data-orig='${ipStart}'/></td>`,
         `<td><input class='ruleData' onfocusout='sc.service.events.ruleUpdated(this)' value='${ipEnd}' data-orig='${ipEnd}'/></td>`,
-        '<td><button onclick="sc.service.DOMHandlers.resetRow(this)" disabled>Reset</button></td>',
-        '<td><button onclick="sc.service.DOMHandlers.toggleDelete(this)">Toggle Delete</button></td>'
+        `<td><button class='resetBtn' onclick="sc.service.DOMHandlers.resetRow(this)" disabled>Reset</button></td>`,
+        `<td><button class='deleteBtn' onclick="sc.service.DOMHandlers.toggleDelete(this)">Toggle Delete</button></td>`
     ];
     const tr = `<tr>${tds.join('')}</tr>`
 
@@ -50,12 +50,12 @@ sc.service.DOMHandlers.toggleDelete = function(evt) {
     const tr = $(evt).closest('tr');
     const inputs = tr.find('input');
   
-    if (tr.data('state') === undefined) {
-        tr.data('state','delete');
+    if (tr.data('state') != 'deletedRow') {
         sc.service.DOMHandlers.updateRowState(tr,'deletedRow');
+        inputs.each(function() { $(this).prop('disabled',true); });
     } else {
-        tr.removeData('state');
         sc.service.DOMHandlers.updateRowState(tr);
+        inputs.each(function() { $(this).prop('disabled',false); });
     }
 
 };
@@ -88,8 +88,9 @@ sc.service.DOMHandlers.updateRowState = (tr, state) => {
     states.forEach((s) => tr.removeClass(s));
 
     if (states.includes(state)) {
+        tr.data('state',state)
         tr.addClass(state);
-    }
+    } else { tr.removeData('state'); }
 };
 
 sc.service.events.ruleUpdated = function(evt) {
