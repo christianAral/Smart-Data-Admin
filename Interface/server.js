@@ -48,21 +48,17 @@ sc.service.DOMHandlers.resetRow = function(evt) {
 
 sc.service.DOMHandlers.toggleDelete = function(evt) {
     const tr = $(evt).closest('tr');
-    const inputs = tr.find('input');
   
     if (tr.data('state') != 'deletedRow') {
         sc.service.DOMHandlers.updateRowState(tr,'deletedRow');
-        inputs.each(function() { $(this).prop('disabled',true); });
     } else {
         sc.service.DOMHandlers.updateRowState(tr);
-        inputs.each(function() { $(this).prop('disabled',false); });
     }
 
 };
 
 sc.service.DOMHandlers.checkRowChangedState = function(tr) {
     const inputs = tr.find('input');
-    const button = tr.find('button');
 
     let allMatch = true;
 
@@ -75,22 +71,39 @@ sc.service.DOMHandlers.checkRowChangedState = function(tr) {
 
     if (allMatch) {
         sc.service.DOMHandlers.updateRowState(tr);
-        button.prop('disabled',true);
     } else {
         sc.service.DOMHandlers.updateRowState(tr,'changedRow');
-        button.prop('disabled',false);
     }
 };
 
 sc.service.DOMHandlers.updateRowState = (tr, state) => {
     const states = ['changedRow', 'deletedRow', 'addedRow'];
+    const inputs = tr.find('input');
+    const button = tr.find('button.resetBtn');
 
     states.forEach((s) => tr.removeClass(s));
 
-    if (states.includes(state)) {
-        tr.data('state',state)
+    if (state == 'changedRow') {
+        // enable reset button
+        tr.data('state',state);
         tr.addClass(state);
-    } else { tr.removeData('state'); }
+        button.prop('disabled',false);
+    } else if (state == 'deletedRow') { 
+        // disable inputs and enable reset button
+        tr.data('state',state);
+        tr.addClass(state);
+        inputs.each(function() { $(this).prop('disabled',true); });
+        button.prop('disabled',false);
+    } else if (state == 'addedRow') {
+        tr.data('state',state);
+        tr.addClass(state);
+
+    } else { 
+        // enable inputs and disable the reset button 
+        tr.removeData('state');
+        inputs.each(function() { $(this).prop('disabled',false); });
+        button.prop('disabled',true);
+    }
 };
 
 sc.service.events.ruleUpdated = function(evt) {
