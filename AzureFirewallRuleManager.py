@@ -47,3 +47,13 @@ class FirewallRuleManager(InteractiveBrowserCredential):
                 baseline_name="default",
             )
         return self._curr_baseline
+    
+    def update_rules(self,instructions):
+        resp = {'message':(
+             f'Instructions received. '
+             f'Add {len(instructions["addedRow"])} rows. '
+             f'Update {len(instructions["changedRow"])} rows. '
+             f'Removed {len(instructions["deletedRow"])} rows.'
+        )}
+
+        return resp

@@ -54,12 +54,7 @@ def update_Firewall_Rules():
     try:
         data = request.json
         # Placeholder for a function that will handle processing all requested rules
-        resp = {'message':(
-             f'Instructions received. '
-             f'Add {len(data["addedRow"])} rows. '
-             f'Update {len(data["changedRow"])} rows. '
-             f'Removed {len(data["deletedRow"])} rows.'
-        )}
+        resp = AzFRM.update_rules(data)
         return jsonify(resp),200
     except Exception as e:
         return jsonify(e), 500
