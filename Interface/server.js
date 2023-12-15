@@ -49,9 +49,9 @@ sc.service.DOMHandlers.createTableRow = function(ipName,ipStart,ipEnd,isNewRow=f
     ];
 
     let tds = [
-        `<td><input class='ruleData ruleName' onfocusin='sc.service.events.inputGainFocus(this)' onfocusout='sc.service.events.inputLoseFocus(this,"name")' value='${ipName}' data-orig='${ipName}' /></td>`,
-        `<td><input class='ruleData' onfocusin='sc.service.events.inputGainFocus(this)' onfocusout='sc.service.events.inputLoseFocus(this,"ip")' value='${ipStart}' data-orig='${ipStart}'/></td>`,
-        `<td><input class='ruleData' onfocusin='sc.service.events.inputGainFocus(this)' onfocusout='sc.service.events.inputLoseFocus(this,"ip")' value='${ipEnd}' data-orig='${ipEnd}'/></td>`
+        `<td><input class='ruleData ruleName'  onfocusin='sc.service.events.inputGainFocus(this)' onfocusout='sc.service.events.inputLoseFocus(this,"name")' value='${ipName}'  data-orig='${ipName}' /></td>`,
+        `<td><input class='ruleData ruleStart' onfocusin='sc.service.events.inputGainFocus(this)' onfocusout='sc.service.events.inputLoseFocus(this,"ip")'   value='${ipStart}' data-orig='${ipStart}'/></td>`,
+        `<td><input class='ruleData ruleEnd'   onfocusin='sc.service.events.inputGainFocus(this)' onfocusout='sc.service.events.inputLoseFocus(this,"ip")'   value='${ipEnd}'   data-orig='${ipEnd}'  /></td>`
     ];
 
     if (isNewRow) { tds.push(...buttonSetNew)      }
@@ -186,7 +186,27 @@ sc.server.refreshFirewallRules = function() {
 };
 
 sc.server.commitFirewallRules = function() {
-    alert("This is where there'll be code to update the firewall rules");
+    const states = ['changedRow', 'deletedRow', 'addedRow'];
+
+    const payload = {};
+
+    states.forEach((s) => {
+        payload[s] = $(`tbody>tr.${s}`).map(function(){
+            const tr = $(this);
+            const keys = {};
+            
+            keys.key = tr.find('input.ruleName').data('orig');
+            keys.name = tr.find('input.ruleName').val();
+            keys.start = tr.find('input.ruleStart').val();
+            keys.end = tr.find('input.ruleEnd').val();
+            
+            return keys
+        }).get()
+    });
+
+    console.log("AJAX to send payload to server.");
+    // debugging
+    sc.payload = payload;
 };
 
 
