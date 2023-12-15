@@ -87,3 +87,12 @@ sc.server.refreshFirewallRules = function() {
         currRulesBody.html(bodyContent)
     });
 };
+
+sc.server.commitFirewallRules = function() {
+    alert("This is where there'll be code to update the firewall rules");
+};
+
+
+$(document).ready(() => {
+    sc.server.refreshFirewallRules();
+});
