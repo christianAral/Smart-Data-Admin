@@ -1,5 +1,7 @@
 from AzureFirewallRuleManager import FirewallRuleManager
 from flask import Flask, jsonify, request, send_from_directory
+import webbrowser
+from threading import Timer
 
 app = Flask(__name__)
 
@@ -34,7 +36,11 @@ def update_Firewall_Rules():
         return jsonify(resp),200
     except Exception as e:
         return jsonify(e), 500
+    
+def open_browser():
+    webbrowser.open_new('http://localhost:5000/')
 
 if __name__ == '__main__':
     AzFRM = FirewallRuleManager()
-    app.run(debug=True)
+    Timer(1, open_browser).start()
+    app.run(debug=False)
