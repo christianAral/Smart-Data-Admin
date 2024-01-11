@@ -170,7 +170,7 @@ sc.service.DOMHandlers.updateRowState = (tr, state) => {
     }
 };
 
-sc.server.refreshFirewallRules = function() {
+sc.server.refreshFirewallRules = function(notify) {
     const contentType = 'application/json';
     $.ajax({
         url:'/refreshFirewallRules',
@@ -182,6 +182,10 @@ sc.server.refreshFirewallRules = function() {
             .sort((a,b) => a.localeCompare(b)).join('');
 
         currRulesBody.html(bodyContent)
+
+        if (notify) {
+            notifications.addCard('Firewall Rules Refreshed','','Info');
+        }
     });
 };
 
@@ -214,7 +218,36 @@ sc.server.commitFirewallRules = function() {
         contentType:contentType,
         data:JSON.stringify(payload)
     }).done((data) => {
-        console.log(JSON.stringify(data))
+        // notifications.addCard('Firewall Rules Committed',JSON.stringify(data),'Info');
+
+        if (JSON.stringify(data.instructions) == JSON.stringify(data.success)) {
+            notifications.addCard('Firewall Rules Committed',JSON.stringify(data.instructions),'Warning');
+        } else {
+            notifications.addCard('Firewall Rules Committed',JSON.stringify((({ instructions, failure }) => ({ instructions, failure }))(data)),'Error');
+        }
+
+        // if (payload.addedRow.length > 0) {
+        //     notifications.addCard(
+        //         'Firewall Rules Committed',
+        //         `${payload.addedRow.length} Rules Added.`,
+        //         'Info'
+        //     )
+        // }
+        // if (payload.changedRow.length > 0) {
+        //     notifications.addCard(
+        //         'Firewall Rules Committed',
+        //         `${payload.changedRow.length} Rules Changed.`,
+        //         'Warning'
+        //     )
+        // }
+        // if (payload.deletedRow.length > 0) {
+        //         notifications.addCard(
+        //         'Firewall Rules Committed',
+        //         `${payload.deletedRow.length} Rules Deleted.`,
+        //         'Error'
+        //     )
+        // }
+        sc.server.refreshFirewallRules();
     });
 };
 

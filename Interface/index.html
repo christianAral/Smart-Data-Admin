@@ -5,11 +5,12 @@
   <meta charset="UTF-8">
   <title>Smart Data Admin Tool</title>
   <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./notifications/notifications.css">
 </head>
 
 <body>
 
-  <button onclick="sc.server.refreshFirewallRules()">Refresh Firewall Rules</button>
+  <button onclick="sc.server.refreshFirewallRules(true)">Refresh Firewall Rules</button>
   <button onclick="sc.server.commitFirewallRules()">Commit Firewall Rules</button>
   <h1>SQL Server IP Firewall Rules</h1>
   <table id="currentRules">
@@ -20,6 +21,7 @@
   <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js'></script>
   <!-- <script src="./script.js"></script> -->
   <script src="./server.js"></script>
+  <script src="./notifications/notifications.js"></script>
 </body>
 
 </html>
