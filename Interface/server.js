@@ -45,7 +45,7 @@ sc.service.DOMHandlers.createTableRow = function(ipName,ipStart,ipEnd,isNewRow=f
     ];
 
     const buttonSetNew = [
-        `<td><button class='removeBtn' onclick="sc.service.DOMHandlers.removeRow(this)">Remove Row</button></td>`,
+        `<td><button class='removeBtn' onclick="sc.service.DOMHandlers.removeRow(this)">Remove Row</button></td>`
     ];
 
     let tds = [
@@ -218,35 +218,12 @@ sc.server.commitFirewallRules = function() {
         contentType:contentType,
         data:JSON.stringify(payload)
     }).done((data) => {
-        // notifications.addCard('Firewall Rules Committed',JSON.stringify(data),'Info');
-
         if (JSON.stringify(data.instructions) == JSON.stringify(data.success)) {
             notifications.addCard('Firewall Rules Committed',JSON.stringify(data.instructions),'Warning');
         } else {
             notifications.addCard('Firewall Rules Committed',JSON.stringify((({ instructions, failure }) => ({ instructions, failure }))(data)),'Error');
         }
 
-        // if (payload.addedRow.length > 0) {
-        //     notifications.addCard(
-        //         'Firewall Rules Committed',
-        //         `${payload.addedRow.length} Rules Added.`,
-        //         'Info'
-        //     )
-        // }
-        // if (payload.changedRow.length > 0) {
-        //     notifications.addCard(
-        //         'Firewall Rules Committed',
-        //         `${payload.changedRow.length} Rules Changed.`,
-        //         'Warning'
-        //     )
-        // }
-        // if (payload.deletedRow.length > 0) {
-        //         notifications.addCard(
-        //         'Firewall Rules Committed',
-        //         `${payload.deletedRow.length} Rules Deleted.`,
-        //         'Error'
-        //     )
-        // }
         sc.server.refreshFirewallRules();
     });
 };
