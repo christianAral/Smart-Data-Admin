@@ -208,10 +208,6 @@ sc.server.commitFirewallRules = function() {
         }).get()
     });
 
-    // debugging
-    sc.payload = payload;
-    console.log("AJAX to send payload to server.");
-
     $.ajax({
         url:'/updateFirewallRules',
         method:'POST',
@@ -227,7 +223,6 @@ sc.server.commitFirewallRules = function() {
         sc.server.refreshFirewallRules();
     });
 };
-
 
 $(document).ready(() => {
     sc.server.refreshFirewallRules();
