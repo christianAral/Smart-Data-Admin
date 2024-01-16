@@ -2,9 +2,6 @@ from typing import Any
 
 
 try:
-    import json
-    from DotDict import DotDict as DD
-    from dataclasses import dataclass
     from azure.identity import InteractiveBrowserCredential
     from azure.core.exceptions import HttpResponseError
     from azure.mgmt.sql import SqlManagementClient
@@ -17,7 +14,6 @@ try:
 except ImportError:
     raise ImportError("This function requires azure-mgmt-sql and azure-identity. To continue, please install them with one of the commands below:\n\npip install azure-mgmt-sql azure-identity\nconda install -c conda-forge azure-mgmt-sql azure-identity")
 
-# @dataclass
 class FirewallRuleManager(InteractiveBrowserCredential):
 
     def __init__(self, **kwargs: Any) -> None:
@@ -64,6 +60,34 @@ class FirewallRuleManager(InteractiveBrowserCredential):
                 baseline_results=updateRules
             )
         )
+
+    def _del_rule(self,instr):
+        self._sql_client.firewall_rules.delete(
+            self._resource_group_name, 
+            self._server_name,
+            instr['key']
+        )
+
+        self._updated_baseline = [
+            r for r in self._updated_baseline if r.result[0] != instr["key"]
+        ]
+
+    def _add_rule(self,instr):
+        firewall_rule_parameters = FirewallRule(
+            start_ip_address=instr['start'], 
+            end_ip_address=instr['end']
+        )
+        self._sql_client.firewall_rules.create_or_update(
+            self._resource_group_name,
+            self._server_name,
+            instr['name'],
+            parameters=firewall_rule_parameters,
+        )
+
+        new_baseline_item = DatabaseVulnerabilityAssessmentRuleBaselineItem(
+            result=[instr['name'], instr['start'], instr['end']]
+        )
+        self._updated_baseline.append(new_baseline_item)
     
     def update_rules(self,instructions):
         self.get_baseline_rules(True)
@@ -88,15 +112,7 @@ class FirewallRuleManager(InteractiveBrowserCredential):
         for instr in instructions['deletedRow']:
             try:
                 print(f'deleting the {instr["key"]} rule!')
-                self._sql_client.firewall_rules.delete(
-                    self._resource_group_name, 
-                    self._server_name,
-                    instr['key']
-                )
-
-                self._updated_baseline = [
-                    r for r in self._updated_baseline if r.result[0] != instr["key"]
-                ]
+                self._del_rule(instr)
                 resp['success']['remove'] += 1
             except HttpResponseError:
                 resp['failure']['remove'] += 1
@@ -104,21 +120,7 @@ class FirewallRuleManager(InteractiveBrowserCredential):
         for instr in instructions['addedRow']:
             try:
                 print(f'adding the {instr["key"]} rule!')
-                firewall_rule_parameters = FirewallRule(
-                    start_ip_address=instr['start'], 
-                    end_ip_address=instr['end']
-                )
-                self._sql_client.firewall_rules.create_or_update(
-                    self._resource_group_name,
-                    self._server_name,
-                    instr['name'],
-                    parameters=firewall_rule_parameters,
-                )
-
-                new_baseline_item = DatabaseVulnerabilityAssessmentRuleBaselineItem(
-                    result=[instr['name'], instr['start'], instr['end']]
-                )
-                self._updated_baseline.append(new_baseline_item)
+                self._add_rule(instr)
                 resp['success']['add'] += 1
             except HttpResponseError:
                 resp['failure']['add'] += 1
@@ -126,6 +128,8 @@ class FirewallRuleManager(InteractiveBrowserCredential):
         for instr in instructions['changedRow']:
             try:
                 print(f'updating the {instr["key"]} rule!')
+                self._del_rule(instr)
+                self._add_rule(instr)
                 resp['success']['update'] += 1
             except HttpResponseError:
                 resp['failure']['update'] += 1
