@@ -37,6 +37,10 @@ button {
     background-color: initial;
 }
 
+button:hover {
+    background-color: lightgray;
+}
+
 .removeBtn {
     width: 100%;
 }
