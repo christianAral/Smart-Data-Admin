@@ -1,4 +1,4 @@
-from AzureFirewallRuleManager import FirewallRuleManager
+from SmartData import SmartDataAdmin
 from flask import Flask, jsonify, request, send_from_directory
 import webbrowser
 from threading import Timer
@@ -17,7 +17,7 @@ def serve_static(filename):
 def refresh_Firewall_Rules():
     try:
         param1 = request.args.get('refresh',True)
-        rules = AzFRM.get_firewall_rules(refresh=param1)
+        rules = SDAdmin.get_firewall_rules(refresh=param1)
         rules = [{
                 'name':r.name,
                 'start':r.start_ip_address,
@@ -32,7 +32,7 @@ def update_Firewall_Rules():
     try:
         data = request.json
         # Placeholder for a function that will handle processing all requested rules
-        resp = AzFRM.update_rules(data)
+        resp = SDAdmin.update_rules(data)
         return jsonify(resp),200
     except Exception as e:
         return jsonify(e), 500
@@ -41,6 +41,6 @@ def open_browser():
     webbrowser.open_new('http://localhost:5000/')
 
 if __name__ == '__main__':
-    AzFRM = FirewallRuleManager()
+    SDAdmin = SmartDataAdmin()
     Timer(1, open_browser).start()
     app.run(debug=False)
