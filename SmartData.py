@@ -13,7 +13,7 @@ try:
     )
     from azure.keyvault.secrets import SecretClient
 except ImportError:
-    reqd_pkgs = ['azure-mgmt-sql','azure-mgmt-keyvault','azure-identity']
+    reqd_pkgs = ['azure-mgmt-sql','azure-keyvault-secrets','azure-identity']
 
     raise ImportError(f"This function requires {', '.join(reqd_pkgs)}. "
                       "To continue, please install them with one of the commands below:\n\n"
