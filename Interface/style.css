@@ -44,3 +44,7 @@ button:hover {
 .removeBtn {
     width: 100%;
 }
+
+.selectedButton {
+    background-color: lightskyblue;
+}

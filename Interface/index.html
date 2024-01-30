@@ -11,6 +11,12 @@
 
 <body>
 
+<div id="pageSelector">
+  <button onclick="sdAdmin.togglePage(this)" data-tab="firewallRules">Firewall Rules</button>
+  <button onclick="sdAdmin.togglePage(this)" data-tab="alteryxUserManagement">Alteryx User Management</button>
+</div><br /><br />
+
+<div id="firewallRules" class="tab">
   <button onclick="sc.server.refreshFirewallRules(true)">Refresh Firewall Rules</button>
   <button onclick="sc.server.commitFirewallRules()">Commit Firewall Rules</button>
   <h1>SQL Server IP Firewall Rules</h1>
@@ -18,9 +24,13 @@
     <thead><th>Name</th><th>Start IP</th><th>End IP</th><th><button onclick="sc.service.DOMHandlers.addNewRule()">Add New Rule</button></th></thead>
     <tbody></tbody>
   </table>
+</div>
+<div id="alteryxUserManagement" class="tab">
+  This is a placeholder
+</div>
 
   <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js'></script>
-  <!-- <script src="./script.js"></script> -->
+  <script src="./script.js"></script>
   <script src="./server.js"></script>
   <script src="./notifications/notifications.js"></script>
 </body>
