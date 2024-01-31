@@ -1,6 +1,8 @@
 from typing import Any
 import os
 import json
+import requests
+import datetime
 
 try:
     from azure.identity import InteractiveBrowserCredential
@@ -12,8 +14,9 @@ try:
         DatabaseVulnerabilityAssessmentRuleBaselineItem,
     )
     from azure.keyvault.secrets import SecretClient
+    from azure.storage.blob import BlobServiceClient
 except ImportError:
-    reqd_pkgs = ['azure-mgmt-sql','azure-keyvault-secrets','azure-identity']
+    reqd_pkgs = ['azure-mgmt-sql','azure-keyvault-secrets','azure-identity','azure-storage-blob']
 
     raise ImportError(f"This function requires {', '.join(reqd_pkgs)}. "
                       "To continue, please install them with one of the commands below:\n\n"
@@ -28,6 +31,7 @@ class SmartDataAdmin():
         self.globalConfig = type("", (), {})()
         self.kvConfig = type("", (), {})()
         self.sqlConfig = type("", (), {})()
+        self.logger = type("", (), {})()
 
     # def _checkEnvironVariables(self):
         self.globalConfig.tenantid = os.environ.get('AZURE_TENANT_ID')
@@ -44,12 +48,41 @@ class SmartDataAdmin():
             allow_multitenant_authentication=True
         )
         self._credential.authenticate()
+
+        # get logged in user
+        try:
+            # Get the access token
+            token = self._credential.get_token('https://graph.microsoft.com/.default')
+
+            # Call Microsoft Graph API to get the user's details
+            headers = {'Authorization': 'Bearer ' + token.token}
+            response = requests.get('https://graph.microsoft.com/v1.0/me', headers=headers)
+
+            # Get the user's UPN
+            self.upn = response.json()['userPrincipalName']
+        except:
+            self.upn = 'noUser@local.local'
     
     # def _setupKeyvaultClient(self):
         self.kv = SecretClient(
             vault_url=f"https://{self.kvConfig.kvname}.vault.azure.net/", 
             credential=self._credential
         )
+
+    # def _setupBlobLogClient(self):
+        self.logger.test = 'hello world'
+        logConfig = json.loads(self.kv.get_secret('blobLogConfig').value)
+        self.logger.config = logConfig
+        self.logger.blob_service_client = BlobServiceClient(
+            account_url=f"https://{self.logger.config['storageAccount']}.blob.core.windows.net", 
+            credential=self._credential
+        )
+        self.logger.log_blog = self.logger.blob_service_client.get_blob_client(
+            self.logger.config['container'], 
+            'testing/SDAdmin_BlobLog.txt'
+        )
+        if not self.logger.log_blog.exists():
+            self.logger.log_blog.create_append_blob()
 
     # def _setupSQLClient(self):
         sqlConfig = json.loads(self.kv.get_secret('firewallRuleManagerConfig').value)
@@ -61,7 +94,10 @@ class SmartDataAdmin():
 
         self.sql = SqlManagementClient(self._credential, SUBSCRIPTION_ID)
 
-
+    def log(self,message:str):
+        timestamp = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+        bMessage = (f"{timestamp} {self.upn.ljust(50)} {message}\n").encode()
+        self.logger.log_blog.append_block(bMessage)
 
     def get_firewall_rules(self,refresh=True):
         if refresh==True or not hasattr(self.sqlConfig,'curr_firewall'):
