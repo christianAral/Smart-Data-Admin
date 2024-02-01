@@ -77,12 +77,6 @@ class SmartDataAdmin():
             account_url=f"https://{self.logger.config['storageAccount']}.blob.core.windows.net", 
             credential=self._credential
         )
-        self.logger.log_blog = self.logger.blob_service_client.get_blob_client(
-            self.logger.config['container'], 
-            'testing/SDAdmin_BlobLog.txt'
-        )
-        if not self.logger.log_blog.exists():
-            self.logger.log_blog.create_append_blob()
 
     # def _setupSQLClient(self):
         sqlConfig = json.loads(self.kv.get_secret('firewallRuleManagerConfig').value)
@@ -97,7 +91,15 @@ class SmartDataAdmin():
     def log(self,message:str):
         timestamp = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
         bMessage = (f"{timestamp} {self.upn.ljust(50)} {message}\n").encode()
-        self.logger.log_blog.append_block(bMessage)
+        
+        log_blob = self.logger.blob_service_client.get_blob_client(
+            self.logger.config['container'], 
+            f"SDAdmin/SDAdmin_{timestamp[:8]}.log"
+        )
+        if not log_blob.exists():
+            log_blob.create_append_blob()
+
+        log_blob.append_block(bMessage)
 
     def get_firewall_rules(self,refresh=True):
         if refresh==True or not hasattr(self.sqlConfig,'curr_firewall'):
