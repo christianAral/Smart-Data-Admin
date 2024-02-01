@@ -14,6 +14,66 @@ sdAdmin.togglePage = function(abc) {
     tab.css({'display':'inline'})
 }
 
+sdAdmin.createTableFromData = function(data, columnOrder) {
+    // Create a new table
+    let table = $('<table></table>');
+
+    // Create table header
+    let thead = $('<thead></thead>');
+    let headerRow = $('<tr></tr>');
+
+    if (columnOrder) {
+        // If columnOrder is provided, iterate over it to create headers
+        for (let i = 0; i < columnOrder.length; i++) {
+            headerRow.append('<th>' + columnOrder[i] + '</th>');
+        }
+        // Add remaining keys as headers
+        for (let key in data[0]) {
+            if (!columnOrder.includes(key)) {
+                headerRow.append('<th>' + key + '</th>');
+            }
+        }
+    } else {
+        // If no columnOrder is provided, use keys from first object
+        for (let key in data[0]) {
+            headerRow.append('<th>' + key + '</th>');
+        }
+    }
+
+    thead.append(headerRow);
+    table.append(thead);
+
+    // Create table body
+    let tbody = $('<tbody></tbody>');
+    for (let i = 0; i < data.length; i++) {
+        let row = $('<tr></tr>');
+        if (columnOrder) {
+            // If columnOrder is provided, iterate over it to create cells
+            for (let j = 0; j < columnOrder.length; j++) {
+                row.append('<td>' + data[i][columnOrder[j]] + '</td>');
+            }
+            // Add remaining keys as cells
+            for (let key in data[i]) {
+                if (!columnOrder.includes(key)) {
+                    row.append('<td>' + data[i][key] + '</td>');
+                }
+            }
+        } else {
+            // If no columnOrder is provided, use keys from objects
+            for (let key in data[i]) {
+                row.append('<td>' + data[i][key] + '</td>');
+            }
+        }
+        tbody.append(row);
+    }
+    table.append(tbody);
+
+    // Append the table to div#logContents
+    const tableContainer = $('div#logContents');
+    tableContainer.children().remove();
+    tableContainer.append(table);
+}
+
 $(document).ready(() => {
     let initialPage = 'firewallRules';
 

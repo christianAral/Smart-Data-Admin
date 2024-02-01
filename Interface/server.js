@@ -224,6 +224,44 @@ sc.server.commitFirewallRules = function() {
     });
 };
 
+sc.server.listLogs = function(notify) {
+    const contentType = 'application/json';
+    $.ajax({
+        url:'/logs',
+        method:'GET',
+        contentType:contentType,
+    }).done((data) => {
+        const logSelect = $('select#logFiles');
+        logSelect.children().remove()
+        data.forEach((d) => {
+            let opt = $('<option>');
+            opt.val(atob(d));
+            opt.text(atob(d));
+            logSelect.append(opt);
+        });
+
+        if (notify) {
+            notifications.addCard('Log List Updated','','Info');
+        }
+    });
+};
+
+sc.server.loadLog = function(notify) {
+    const contentType = 'application/json';
+    const logFile = btoa($('select#logFiles').val())
+    $.ajax({
+        url:`/logs/${logFile}`,
+        method:'GET',
+        contentType:contentType,
+    }).done((data) => {
+        sdAdmin.createTableFromData(data,['timestamp','type','user','message'])
+
+        if (notify) {
+            notifications.addCard('Log Loaded','','Info');
+        }
+    });
+};
+
 $(document).ready(() => {
     sc.server.refreshFirewallRules();
 });

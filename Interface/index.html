@@ -14,6 +14,7 @@
 <div id="pageSelector">
   <button onclick="sdAdmin.togglePage(this)" data-tab="firewallRules">Firewall Rules</button>
   <button onclick="sdAdmin.togglePage(this)" data-tab="alteryxUserManagement">Alteryx User Management</button>
+  <button onclick="sdAdmin.togglePage(this)" data-tab="logs">Logs</button>
 </div><br /><br />
 
 <div id="firewallRules" class="tab">
@@ -26,7 +27,15 @@
   </table>
 </div>
 <div id="alteryxUserManagement" class="tab">
-  This is a placeholder
+  This is a placeholder alteryx user management tab
+</div>
+<div id="logs" class="tab">
+  <button onclick="sc.server.listLogs()">List Logs</button>
+  <select id="logFiles"></select>
+  <button onclick="sc.server.loadLog()">Load Log</button>
+  <div id="logContents">
+
+  </div>
 </div>
 
   <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js'></script>
