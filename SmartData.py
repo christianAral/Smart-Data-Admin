@@ -88,9 +88,12 @@ class SmartDataAdmin():
 
         self.sql = SqlManagementClient(self._credential, SUBSCRIPTION_ID)
 
-    def log(self,message:str):
+    def log(self,type:str,message:str):
         timestamp = datetime.datetime.utcnow().isoformat(timespec='seconds')
-        bMessage = (f"{timestamp} {self.upn.ljust(50)} {message}\n").encode()
+        if isinstance(message,dict):
+            message = str(message)
+        msg_tab_escaped = message.replace('\t','    ')
+        bMessage = (f"{timestamp}\t{type}\t{self.upn}\t{msg_tab_escaped}\n").encode()
         
         log_blob = self.logger.blob_service_client.get_blob_client(
             self.logger.config['container'], 
@@ -98,6 +101,8 @@ class SmartDataAdmin():
         )
         if not log_blob.exists():
             log_blob.create_append_blob()
+            headers = '\t'.join(['timestamp','type','user','message']) + '\n'
+            log_blob.append_block(headers.encode())
 
         log_blob.append_block(bMessage)
 
@@ -186,7 +191,7 @@ class SmartDataAdmin():
 
         for instr in instructions['changedRow']:
             try:
-                print(f'updating the {instr["key"]} rule!')
+                self.log('firewallChange',instr)
                 self._del_rule(instr)
                 self._add_rule(instr)
                 resp['success']['update'] += 1
@@ -194,14 +199,14 @@ class SmartDataAdmin():
                 resp['failure']['update'] += 1
         for instr in instructions['deletedRow']:
             try:
-                print(f'deleting the {instr["name"]} rule!')
+                self.log('firewallRemove',instr)
                 self._del_rule(instr)
                 resp['success']['remove'] += 1
             except HttpResponseError:
                 resp['failure']['remove'] += 1
         for instr in instructions['addedRow']:
             try:
-                print(f'adding the {instr["name"]} rule!')
+                self.log('firewallAdd',instr)
                 self._add_rule(instr)
                 resp['success']['add'] += 1
             except HttpResponseError:
