@@ -133,10 +133,7 @@ class SmartDataAdmin():
     def get_log_file(self,filename,b64:bool=True):
         if b64:
             filename = base64.b64decode(filename.encode()).decode()
-
-        print(f'filename: {filename}')
         blobClient = self.logger.container_client.get_blob_client(filename)
-        print(f'blobClient exists: {blobClient.exists()}')
         blobStr = blobClient.download_blob().readall().decode('utf-8')
         blobDict = self._tsv2dict(blobStr)
         return blobDict
@@ -247,8 +244,6 @@ class SmartDataAdmin():
             except HttpResponseError:
                 resp['failure']['add'] += 1
 
-        print('setting baseline')
         self.set_baseline_rules()
-        print('baseline set successfully')
 
         return resp
