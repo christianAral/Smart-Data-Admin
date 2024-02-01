@@ -47,6 +47,12 @@ sdAdmin.createTableFromData = function(data, columnOrder) {
     let tbody = $('<tbody></tbody>');
     for (let i = 0; i < data.length; i++) {
         let row = $('<tr></tr>');
+        if (i % 2 == 0) {
+            row.addClass('logRowEven');
+        } else {
+            row.addClass('logRowOdd');
+        }
+
         if (columnOrder) {
             // If columnOrder is provided, iterate over it to create cells
             for (let j = 0; j < columnOrder.length; j++) {

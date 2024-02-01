@@ -48,3 +48,16 @@ button:hover {
 .selectedButton {
     background-color: lightskyblue;
 }
+  
+#logContents>table {
+    border-collapse: collapse;  
+}
+
+#logContents td,#logContents th {
+    border: 1px solid black;
+    padding: 0.25em 1em
+}
+
+.logRowOdd {
+    background-color: lightgrey
+}
