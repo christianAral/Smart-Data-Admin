@@ -3,6 +3,7 @@ import os
 import json
 import requests
 import datetime
+import base64
 
 try:
     from azure.identity import InteractiveBrowserCredential
@@ -70,12 +71,14 @@ class SmartDataAdmin():
         )
 
     # def _setupBlobLogClient(self):
-        self.logger.test = 'hello world'
         logConfig = json.loads(self.kv.get_secret('blobLogConfig').value)
         self.logger.config = logConfig
         self.logger.blob_service_client = BlobServiceClient(
             account_url=f"https://{self.logger.config['storageAccount']}.blob.core.windows.net", 
             credential=self._credential
+        )
+        self.logger.container_client = self.logger.blob_service_client.get_container_client(
+            container=self.logger.config['container']
         )
 
     # def _setupSQLClient(self):
@@ -105,6 +108,38 @@ class SmartDataAdmin():
             log_blob.append_block(headers.encode())
 
         log_blob.append_block(bMessage)
+
+    def _tsv2dict(self,tsv:str) -> dict:
+        lines = tsv.split('\n')
+        header = lines[0].split('\t')
+        data_lines = lines[1:-1]
+
+        result = []
+        for line in data_lines:
+            columns = line.split('\t')
+            row_dict = {header[i] if i < len(header) else f'Field{i}': col for i, col in enumerate(columns)}
+            result.append(row_dict)
+
+        return result
+    
+    def list_log_file_names(self,b64:bool=True):
+        filenames = [b for b in self.logger.container_client.list_blob_names(name_starts_with='SDAdmin/SDAdmin',)]
+        
+        if b64:
+            return [base64.b64encode(fname.encode()).decode() for fname in filenames]
+        else:
+            return filenames 
+    
+    def get_log_file(self,filename,b64:bool=True):
+        if b64:
+            filename = base64.b64decode(filename.encode()).decode()
+
+        print(f'filename: {filename}')
+        blobClient = self.logger.container_client.get_blob_client(filename)
+        print(f'blobClient exists: {blobClient.exists()}')
+        blobStr = blobClient.download_blob().readall().decode('utf-8')
+        blobDict = self._tsv2dict(blobStr)
+        return blobDict
 
     def get_firewall_rules(self,refresh=True):
         if refresh==True or not hasattr(self.sqlConfig,'curr_firewall'):
