@@ -91,4 +91,6 @@ $(document).ready(() => {
 
     $('.tab').css({'display':'none'})
     tab.css({'display':'inline'})
+
+    sc.server.listLogs();
 });
