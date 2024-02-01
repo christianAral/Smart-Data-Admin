@@ -17,12 +17,13 @@ try:
     from azure.keyvault.secrets import SecretClient
     from azure.storage.blob import BlobServiceClient
 except ImportError:
-    reqd_pkgs = ['azure-mgmt-sql','azure-keyvault-secrets','azure-identity','azure-storage-blob']
+    with open('requirements.txt','r', encoding='utf-16') as reqs:
+        reqd_pkgs = [req.split('==')[0] for req in reqs.read().split('\n')]
 
     raise ImportError(f"This function requires {', '.join(reqd_pkgs)}. "
                       "To continue, please install them with one of the commands below:\n\n"
-                      "pip install {' '.join(reqd_pkgs)}\n"
-                      "conda install -c conda-forge {' '.join(reqd_pkgs)}")
+                      f"  pip install {' '.join(reqd_pkgs)}\n"
+                      f"  conda install -c conda-forge {' '.join(reqd_pkgs)}")
 
 
 class SmartDataAdmin():
