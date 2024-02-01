@@ -89,12 +89,12 @@ class SmartDataAdmin():
         self.sql = SqlManagementClient(self._credential, SUBSCRIPTION_ID)
 
     def log(self,message:str):
-        timestamp = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+        timestamp = datetime.datetime.utcnow().isoformat(timespec='seconds')
         bMessage = (f"{timestamp} {self.upn.ljust(50)} {message}\n").encode()
         
         log_blob = self.logger.blob_service_client.get_blob_client(
             self.logger.config['container'], 
-            f"SDAdmin/SDAdmin_{timestamp[:8]}.log"
+            f"SDAdmin/SDAdmin_{timestamp[:10]}.log"
         )
         if not log_blob.exists():
             log_blob.create_append_blob()
