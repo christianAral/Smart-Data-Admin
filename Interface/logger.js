@@ -12,6 +12,7 @@ sdAdmin.logger.listLogs = function(notify) {
     }).done((data) => {
         const logSelect = $('select#logFiles');
         logSelect.children().remove()
+        data.sort().reverse()
         data.forEach((d) => {
             let opt = $('<option>');
             opt.val(atob(d));
