@@ -230,53 +230,6 @@ sc.server.commitFirewallRules = function() {
     });
 };
 
-sc.server.listLogs = function(notify) {
-    $('*').css('cursor','wait')
-    const contentType = 'application/json';
-    $.ajax({
-        url:'/logs',
-        method:'GET',
-        contentType:contentType,
-    }).done((data) => {
-        const logSelect = $('select#logFiles');
-        logSelect.children().remove()
-        data.forEach((d) => {
-            let opt = $('<option>');
-            opt.val(atob(d));
-            opt.text(atob(d));
-            logSelect.append(opt);
-        });
-
-        if (notify) {
-            notifications.addCard('Log List Updated','','Info');
-        }
-    }).always(() => {
-        $('*').css('cursor','')
-    });
-};
-
-sc.server.loadLog = function(notify) {
-    $('*').css('cursor','wait')
-    const contentType = 'application/json';
-    const logFile = btoa($('select#logFiles').val())
-    $.ajax({
-        url:`/logs/${logFile}`,
-        method:'GET',
-        contentType:contentType,
-    }).done((data) => {
-        const table = sdAdmin.createTableFromData(data,['timestamp','type','user','message']);
-        const tableContainer = $('div#logContents');
-        tableContainer.children().remove();
-        tableContainer.append(table);
-
-        if (notify) {
-            notifications.addCard('Log Loaded','','Info');
-        }
-    }).always(() => {
-        $('*').css('cursor','')
-    });
-};
-
 sc.server.listSftpUsers = function(notify) {
     $('*').css('cursor','wait')
     $('button#sftpUserRefresh').prop('disabled', true);

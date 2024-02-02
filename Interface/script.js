@@ -14,7 +14,7 @@ sdAdmin.togglePage = function(abc) {
     tab.css({'display':'inline'})
 
     if (tabName == 'logs') {
-        sc.server.listLogs();
+        sdAdmin.logger.listLogs();
     } else if (tabName == 'sftpUserManagement') {}
 }
 
