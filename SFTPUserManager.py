@@ -10,7 +10,16 @@ class SFTPUserManager():
             aws_secret_access_key=secret_id
         )
 
-    def list_secrets(self,NextToken=None):
+    def get_sftp_user_info(self):
+        allSecrets = self._list_secrets()
+        sftpUserInfo = [self._get_secret_value(secret['ARN']) for secret in allSecrets]
+        return sftpUserInfo
+
+    def get_sftp_user_password(self,ARN:str):
+        sftpUserInfo = self._get_secret_value(ARN,True)
+        return sftpUserInfo
+
+    def _list_secrets(self,NextToken=None):
         Filters =[{
                     'Key': 'name',
                     'Values': ['SFTP']
@@ -27,11 +36,11 @@ class SFTPUserManager():
             )
         secretsList = resp['SecretList']
         if "NextToken" in resp:
-            secretsList.extend(self.list_secrets(resp['NextToken']))
+            secretsList.extend(self._list_secrets(resp['NextToken']))
         
         return secretsList
     
-    def get_secret_value(self,SecretId,inclPW:bool=False):
+    def _get_secret_value(self,SecretId,inclPW:bool=False):
         secret = self._client.get_secret_value(SecretId=SecretId)
         secretJSON = json.loads(secret['SecretString'])
         if inclPW:
