@@ -37,7 +37,7 @@ button {
     background-color: initial;
 }
 
-button:hover {
+button:not(:disabled):hover {
     background-color: lightgray;
 }
 
