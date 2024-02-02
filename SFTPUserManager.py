@@ -1,5 +1,6 @@
 import boto3
 import json
+import base64
 
 class SFTPUserManager():
     def __init__(self,access_key,secret_id) -> None:
@@ -15,7 +16,9 @@ class SFTPUserManager():
         sftpUserInfo = [self._get_secret_value(secret['ARN']) for secret in allSecrets]
         return sftpUserInfo
 
-    def get_sftp_user_password(self,ARN:str):
+    def get_sftp_user_password(self,ARN:str,b64:bool=True):
+        if b64:
+            ARN = base64.b64decode(ARN.encode()).decode()
         sftpUserInfo = self._get_secret_value(ARN,True)
         return sftpUserInfo
 
@@ -50,7 +53,7 @@ class SFTPUserManager():
         filteredJSON = {k:v for k,v in secretJSON.items() if k in keys}
 
         metadata = self._describe_secret(SecretId=SecretId)
-        filteredMetadata = {k:v for k,v in metadata.items() if k in ('Name','Description')}
+        filteredMetadata = {k:v for k,v in metadata.items() if k in ('Name')}
 
         return {**filteredJSON,**filteredMetadata,"ARN":SecretId}
     

@@ -52,6 +52,22 @@ def get_log(logName):
     except Exception as e:
         return jsonify(e), 500
     
+@app.route('/sftpmgr',methods=['GET'])
+def get_sftp_users():
+    try:
+        resp = SDAdmin.sftpMGR.get_sftp_user_info()
+        return jsonify(resp),200
+    except Exception as e:
+        return jsonify(e), 500
+    
+@app.route('/sftpmgr/<ARN_b64>',methods=['GET'])
+def get_sftp_user(ARN_b64):
+    try:
+        resp = SDAdmin.sftpMGR.get_sftp_user_password(ARN_b64)
+        return jsonify(resp),200
+    except Exception as e:
+        return jsonify(e), 500
+    
 def open_browser():
     webbrowser.open_new('http://localhost:5000/')
 

@@ -3,6 +3,7 @@ import json
 
 from Logger import Logger
 from FirewallRuleManager import FirewallRuleManager
+from SFTPUserManager import SFTPUserManager
 import CheckRequirements
 
 from azure.identity import InteractiveBrowserCredential
@@ -42,3 +43,7 @@ class SmartDataAdmin():
 
         sqlConfig = json.loads(self.kv.get_secret('firewallRuleManagerConfig').value)
         self.firewallMGR = FirewallRuleManager(self._credential,sqlConfig,self.logger)
+
+        sftpConfig = json.loads(self.kv.get_secret('awsSecretManagerCreds').value)
+        self.sftpMGR = SFTPUserManager(sftpConfig['ACCESS_KEY'],sftpConfig['SECRET_KEY'])
+        
