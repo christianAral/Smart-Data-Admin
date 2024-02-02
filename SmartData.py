@@ -1,6 +1,5 @@
 import os
 import json
-import requests
 
 from Logger import Logger
 from FirewallRuleManager import FirewallRuleManager
@@ -48,15 +47,6 @@ class SmartDataAdmin():
             allow_multitenant_authentication=True
         )
         self._credential.authenticate()
-
-        # get logged in user
-        try:
-            token = self._credential.get_token('https://graph.microsoft.com/.default')
-            headers = {'Authorization': 'Bearer ' + token.token}
-            response = requests.get('https://graph.microsoft.com/v1.0/me', headers=headers)
-            self.upn = response.json()['userPrincipalName']
-        except:
-            self.upn = 'noUser@local.local'
     
     # def _setupKeyvaultClient(self):
         self.kv = SecretClient(
@@ -65,7 +55,7 @@ class SmartDataAdmin():
         )
 
         logConfig = json.loads(self.kv.get_secret('blobLogConfig').value)
-        self.logger = Logger(self._credential,logConfig,self.upn)
+        self.logger = Logger(self._credential,logConfig)
 
         sqlConfig = json.loads(self.kv.get_secret('firewallRuleManagerConfig').value)
         self.firewallMGR = FirewallRuleManager(self._credential,sqlConfig,self.logger)

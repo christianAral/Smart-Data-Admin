@@ -1,11 +1,20 @@
 import datetime
 import base64
+import requests
 from azure.storage.blob import BlobServiceClient
 
 class Logger():
-    def __init__(self,credential,logConfig,UPN) -> None:
+    def __init__(self,credential,logConfig) -> None:
         self.config = logConfig
-        self.upn = UPN
+
+        try: # get logged in user
+            token = credential.get_token('https://graph.microsoft.com/.default')
+            headers = {'Authorization': 'Bearer ' + token.token}
+            response = requests.get('https://graph.microsoft.com/v1.0/me', headers=headers)
+            self.upn = response.json()['userPrincipalName']
+        except: # give a fake name
+            self.upn = 'noUser@local.local'
+
         self.blob_service_client = BlobServiceClient(
             account_url=f"https://{self.config['storageAccount']}.blob.core.windows.net", 
             credential=credential
