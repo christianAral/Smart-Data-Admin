@@ -264,7 +264,10 @@ sc.server.loadLog = function(notify) {
         method:'GET',
         contentType:contentType,
     }).done((data) => {
-        sdAdmin.createTableFromData(data,['timestamp','type','user','message'])
+        const table = sdAdmin.createTableFromData(data,['timestamp','type','user','message']);
+        const tableContainer = $('div#logContents');
+        tableContainer.children().remove();
+        tableContainer.append(table);
 
         if (notify) {
             notifications.addCard('Log Loaded','','Info');
@@ -273,6 +276,49 @@ sc.server.loadLog = function(notify) {
         $('*').css('cursor','')
     });
 };
+
+sc.server.listSftpUsers = function(notify) {
+    $('*').css('cursor','wait')
+    $('button#sftpUserRefresh').prop('disabled', true);
+    const contentType = 'application/json';
+    $.ajax({
+        url:'/sftpmgr',
+        method:'GET',
+        contentType:contentType,
+    }).done((data) => {
+        sc.tempdata = data;
+        const table = sdAdmin.createTableFromData(data,['Name','HomeDirectory']);
+        const tableContainer = $('div#sftpUsers');
+        tableContainer.children().remove();
+        tableContainer.append(table);
+
+        if (notify) {
+            notifications.addCard('SFTP User List Refreshed','','Info');
+        }
+    }).always(() => {
+        $('*').css('cursor','')
+        $('button#sftpUserRefresh').prop('disabled', false);
+    });
+};
+
+// sc.server.getSftpUser = function(notify) {
+//     $('*').css('cursor','wait')
+//     const contentType = 'application/json';
+//     const ARN_b64 = btoa('This is where the selected ARN will go');
+//     $.ajax({
+//         url:`/sftpmgr/${ARN_b64}`,
+//         method:'GET',
+//         contentType:contentType,
+//     }).done((data) => {
+//         console.log(data);
+
+//         if (notify) {
+//             notifications.addCard('SFTP User Was Retrieved','','Info');
+//         }
+//     }).always(() => {
+//         $('*').css('cursor','')
+//     });
+// };
 
 $(document).ready(() => {
     sc.server.refreshFirewallRules();

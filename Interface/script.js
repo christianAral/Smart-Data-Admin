@@ -15,7 +15,7 @@ sdAdmin.togglePage = function(abc) {
 
     if (tabName == 'logs') {
         sc.server.listLogs();
-    }
+    } else if (tabName == 'sftpUserManagement') {}
 }
 
 sdAdmin.createTableFromData = function(data, columnOrder) {
@@ -66,10 +66,7 @@ sdAdmin.createTableFromData = function(data, columnOrder) {
     }
     table.append(tbody);
 
-    // Append the table to div#logContents
-    const tableContainer = $('div#logContents');
-    tableContainer.children().remove();
-    tableContainer.append(table);
+    return table;
 }
 
 $(document).ready(() => {
