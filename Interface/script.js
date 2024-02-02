@@ -1,7 +1,45 @@
 if (typeof sdAdmin === 'undefined') { sdAdmin = {} };
 
-sdAdmin.togglePage = function(abc) {
-    const btn = $(abc);
+sdAdmin.addEventHandlers = function() {
+    const events = [
+        {
+            selector: 'button#firewallRefreshBtn',
+            event:    'click',
+            function: function(){sdAdmin.firewallMgr.refreshFirewallRules(true)}
+        },
+        {
+            selector: 'button#firewallCommitBtn',
+            event:    'click',
+            function: sdAdmin.firewallMgr.commitFirewallRules
+        },
+        {
+          selector: 'button#sftpUserRefreshBtn',
+          event:    'click',
+          function: sc.server.listSftpUsers
+        },
+        {
+          selector: 'button#loadLogBtn',
+          event:    'click',
+          function: sdAdmin.logger.loadLog
+        },
+        {
+          selector: 'button#newRuleBtn',
+          event:    'click',
+          function: sc.service.DOMHandlers.addNewRule
+        },
+        {
+          selector: 'button.tabToggleBtn',
+          event:    'click',
+          function: sdAdmin.togglePage
+        }        
+    ];
+    events.forEach((evt) => {
+        $(evt.selector).on(evt.event, evt.function);
+    });  
+}
+
+sdAdmin.togglePage = function() {
+    const btn = $(this);
     const tabName = btn.data('tab');
     const tab = $(`div#${tabName}`)
 
@@ -80,4 +118,8 @@ $(document).ready(() => {
 
     $('.tab').css({'display':'none'})
     tab.css({'display':'inline'})
+
+    sdAdmin.firewallMgr.refreshFirewallRules();
+
+    sdAdmin.addEventHandlers();
 });

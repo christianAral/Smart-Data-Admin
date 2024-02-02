@@ -12,24 +12,24 @@
 <body>
 
 <div id="pageSelector">
-  <button onclick="sdAdmin.togglePage(this)" data-tab="firewallRules">Firewall Rules</button>
-  <button onclick="sdAdmin.togglePage(this)" data-tab="sftpUserManagement">SFTP User Management</button>
-  <!-- <button onclick="sdAdmin.togglePage(this)" data-tab="alteryxUserManagement">Alteryx User Management</button> -->
-  <button onclick="sdAdmin.togglePage(this)" data-tab="logs">Logs</button>
+  <button class="tabToggleBtn" data-tab="firewallRules">Firewall Rules</button>
+  <button class="tabToggleBtn" data-tab="sftpUserManagement">SFTP User Management</button>
+  <!-- <button class="tabToggleBtn" data-tab="alteryxUserManagement">Alteryx User Management</button> -->
+  <button class="tabToggleBtn" data-tab="logs">Logs</button>
 </div>
 
 <div id="firewallRules" class="tab">
   <h1>SQL Server IP Firewall Rules</h1>
-  <button id='firewallRefreshBtn' onclick="sdAdmin.firewallMgr.refreshFirewallRules(true)">Refresh Firewall Rules</button>
-  <button id='firewallCommitBtn' onclick="sdAdmin.firewallMgr.commitFirewallRules()">Commit Firewall Rules</button>
+  <button id='firewallRefreshBtn'>Refresh Firewall Rules</button>
+  <button id='firewallCommitBtn'>Commit Firewall Rules</button>
   <table id="currentRules">
-    <thead><th>Name</th><th>Start IP</th><th>End IP</th><th><button onclick="sc.service.DOMHandlers.addNewRule()">Add New Rule</button></th></thead>
+    <thead><th>Name</th><th>Start IP</th><th>End IP</th><th><button id='newRuleBtn'>Add New Rule</button></th></thead>
     <tbody></tbody>
   </table>
 </div>
 <div id="sftpUserManagement" class="tab">
   <h1>SFTP User Manager</h1>
-  <button id='sftpUserRefresh' onclick="sc.server.listSftpUsers()">Refresh SFTP User List</button>
+  <button id='sftpUserRefreshBtn'>Refresh SFTP User List</button>
   <div id="sftpUsers"></div>
 </div>
 <!-- <div id="alteryxUserManagement" class="tab">
@@ -38,7 +38,7 @@
 <div id="logs" class="tab">
   <h1>Smart Data Admin Log Viewer</h1>
   <select id="logFiles"></select>
-  <button onclick="sdAdmin.logger.loadLog()">Load Log</button>
+  <button id='loadLogBtn'>Load Log</button>
   <div id="logContents"></div>
 </div>
 

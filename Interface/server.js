@@ -172,7 +172,7 @@ sc.service.DOMHandlers.updateRowState = (tr, state) => {
 
 sc.server.listSftpUsers = function(notify) {
     $('*').css('cursor','wait')
-    $('button#sftpUserRefresh').prop('disabled', true);
+    $('button#sftpUserRefreshBtn').prop('disabled', true);
     const contentType = 'application/json';
     $.ajax({
         url:'/sftpmgr',
@@ -190,7 +190,7 @@ sc.server.listSftpUsers = function(notify) {
         }
     }).always(() => {
         $('*').css('cursor','')
-        $('button#sftpUserRefresh').prop('disabled', false);
+        $('button#sftpUserRefreshBtn').prop('disabled', false);
     });
 };
 
@@ -212,7 +212,3 @@ sc.server.listSftpUsers = function(notify) {
 //         $('*').css('cursor','')
 //     });
 // };
-
-$(document).ready(() => {
-    sdAdmin.firewallMgr.refreshFirewallRules();
-});
