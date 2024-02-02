@@ -17,7 +17,7 @@ def serve_static(filename):
 def refresh_Firewall_Rules():
     try:
         param1 = request.args.get('refresh',True)
-        rules = SDAdmin.get_firewall_rules(refresh=param1)
+        rules = SDAdmin.firewallMGR.get_firewall_rules(refresh=param1)
         rules = [{
                 'name':r.name,
                 'start':r.start_ip_address,
@@ -31,7 +31,7 @@ def refresh_Firewall_Rules():
 def update_Firewall_Rules():
     try:
         data = request.json
-        resp = SDAdmin.update_rules(data)
+        resp = SDAdmin.firewallMGR.update_rules(data)
         return jsonify(resp),200
     except Exception as e:
         return jsonify(e), 500
