@@ -26,21 +26,16 @@ sdAdmin.createTableFromData = function(data, columnOrder) {
     let thead = $('<thead></thead>');
     let headerRow = $('<tr></tr>');
 
-    if (columnOrder) {
-        // If columnOrder is provided, iterate over it to create headers
-        for (let i = 0; i < columnOrder.length; i++) {
-            headerRow.append('<th>' + columnOrder[i] + '</th>');
-        }
-        // Add remaining keys as headers
-        for (let key in data[0]) {
-            if (!columnOrder.includes(key)) {
-                headerRow.append('<th>' + key + '</th>');
-            }
-        }
-    } else {
-        // If no columnOrder is provided, use keys from first object
-        for (let key in data[0]) {
-            headerRow.append('<th>' + key + '</th>');
+    if (!columnOrder) { columnOrder = []; }
+
+    // If columnOrder is provided, iterate over it to create headers
+    for (let i = 0; i < columnOrder.length; i++) {
+        headerRow.append(`<th>${columnOrder[i]}</th>`);
+    }
+    // Add remaining keys as headers
+    for (let key in data[0]) {
+        if (!columnOrder.includes(key)) {
+            headerRow.append(`<th>${key}</th>`);
         }
     }
 
@@ -57,21 +52,14 @@ sdAdmin.createTableFromData = function(data, columnOrder) {
             row.addClass('logRowOdd');
         }
 
-        if (columnOrder) {
-            // If columnOrder is provided, iterate over it to create cells
-            for (let j = 0; j < columnOrder.length; j++) {
-                row.append('<td>' + data[i][columnOrder[j]] + '</td>');
-            }
-            // Add remaining keys as cells
-            for (let key in data[i]) {
-                if (!columnOrder.includes(key)) {
-                    row.append('<td>' + data[i][key] + '</td>');
-                }
-            }
-        } else {
-            // If no columnOrder is provided, use keys from objects
-            for (let key in data[i]) {
-                row.append('<td>' + data[i][key] + '</td>');
+        // If columnOrder is provided, iterate over it to create cells
+        for (let j = 0; j < columnOrder.length; j++) {
+            row.append(`<td>${data[i][columnOrder[j]]}</td>`);
+        }
+        // Add remaining keys as cells
+        for (let key in data[i]) {
+            if (!columnOrder.includes(key)) {
+                row.append(`<td>${data[i][key]}</td>`);
             }
         }
         tbody.append(row);
