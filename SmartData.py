@@ -3,27 +3,10 @@ import json
 
 from Logger import Logger
 from FirewallRuleManager import FirewallRuleManager
+import CheckRequirements
 
-try:
-    from azure.identity import InteractiveBrowserCredential
-    from azure.keyvault.secrets import SecretClient
-    from azure.core.exceptions import HttpResponseError
-    from azure.mgmt.sql import SqlManagementClient
-    from azure.mgmt.sql.models import (
-        FirewallRule,
-        DatabaseVulnerabilityAssessmentRuleBaseline,
-        DatabaseVulnerabilityAssessmentRuleBaselineItem,
-    )
-    from azure.storage.blob import BlobServiceClient
-except ImportError:
-    with open('requirements.txt','r', encoding='utf-16') as reqs:
-        reqd_pkgs = [req.split('==')[0] for req in reqs.read().split('\n')]
-
-    raise ImportError(f"This function requires {', '.join(reqd_pkgs)}. "
-                      "To continue, please install them with one of the commands below:\n\n"
-                      f"  pip install {' '.join(reqd_pkgs)}\n"
-                      f"  conda install -c conda-forge {' '.join(reqd_pkgs)}")
-
+from azure.identity import InteractiveBrowserCredential
+from azure.keyvault.secrets import SecretClient
 
 class SmartDataAdmin():
     def __init__(self) -> None:
