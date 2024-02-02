@@ -39,7 +39,7 @@ def update_Firewall_Rules():
 @app.route('/logs',methods=['GET'])
 def get_logs():
     try:
-        resp = SDAdmin.list_log_file_names()
+        resp = SDAdmin.logger.list_log_file_names()
         return jsonify(resp),200
     except Exception as e:
         return jsonify(e), 500
@@ -47,7 +47,7 @@ def get_logs():
 @app.route('/logs/<logName>',methods=['GET'])
 def get_log(logName):
     try:
-        resp = SDAdmin.get_log_file(logName)
+        resp = SDAdmin.logger.get_log_file(logName)
         return jsonify(resp),200
     except Exception as e:
         return jsonify(e), 500
