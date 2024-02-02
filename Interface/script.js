@@ -13,24 +13,24 @@ sdAdmin.addEventHandlers = function() {
             function: sdAdmin.firewallMgr.commitFirewallRules
         },
         {
-          selector: 'button#sftpUserRefreshBtn',
-          event:    'click',
-          function: sc.server.listSftpUsers
+            selector: 'button#sftpUserRefreshBtn',
+            event:    'click',
+            function: sc.server.listSftpUsers
         },
         {
-          selector: 'button#loadLogBtn',
-          event:    'click',
-          function: sdAdmin.logger.loadLog
+            selector: 'button#loadLogBtn',
+            event:    'click',
+            function: sdAdmin.logger.loadLog
         },
         {
-          selector: 'button#newRuleBtn',
-          event:    'click',
-          function: sc.service.DOMHandlers.addNewRule
+            selector: 'button#newRuleBtn',
+            event:    'click',
+            function: sc.service.DOMHandlers.addNewRule
         },
         {
-          selector: 'button.tabToggleBtn',
-          event:    'click',
-          function: sdAdmin.togglePage
+            selector: 'button.tabToggleBtn',
+            event:    'click',
+            function: sdAdmin.togglePage
         }        
     ];
     events.forEach((evt) => {
