@@ -1,17 +1,21 @@
 const sdAdmin = {}
 
 sdAdmin.togglePage = function(abc) {
-    let btn = $(abc);
+    const btn = $(abc);
+    const tabName = btn.data('tab');
+    const tab = $(`div#${tabName}`)
+
     btn.prop('disabled', true); // disable the clicked button
     btn.addClass('selectedButton');
     btn.siblings().prop('disabled', false); // enable all sibling buttons
     btn.siblings().removeClass('selectedButton');
 
-    let tabName = btn.data('tab');
-
-    let tab = $(`div#${tabName}`)
     $('.tab').css({'display':'none'})
     tab.css({'display':'inline'})
+
+    if (tabName == 'logs') {
+        sc.server.listLogs();
+    }
 }
 
 sdAdmin.createTableFromData = function(data, columnOrder) {
@@ -91,6 +95,4 @@ $(document).ready(() => {
 
     $('.tab').css({'display':'none'})
     tab.css({'display':'inline'})
-
-    sc.server.listLogs();
 });
