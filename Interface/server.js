@@ -171,6 +171,7 @@ sc.service.DOMHandlers.updateRowState = (tr, state) => {
 };
 
 sc.server.refreshFirewallRules = function(notify) {
+    $('*').css('cursor','wait')
     const contentType = 'application/json';
     $.ajax({
         url:'/refreshFirewallRules',
@@ -186,10 +187,13 @@ sc.server.refreshFirewallRules = function(notify) {
         if (notify) {
             notifications.addCard('Firewall Rules Refreshed','','Info');
         }
+    }).always(() => {
+        $('*').css('cursor','')
     });
 };
 
 sc.server.commitFirewallRules = function() {
+    $('*').css('cursor','wait')
     const states = ['changedRow', 'deletedRow', 'addedRow'];
     const contentType = 'application/json';
     const payload = {};
@@ -221,10 +225,13 @@ sc.server.commitFirewallRules = function() {
         }
 
         sc.server.refreshFirewallRules();
+    }).always(() => {
+        $('*').css('cursor','')
     });
 };
 
 sc.server.listLogs = function(notify) {
+    $('*').css('cursor','wait')
     const contentType = 'application/json';
     $.ajax({
         url:'/logs',
@@ -243,10 +250,13 @@ sc.server.listLogs = function(notify) {
         if (notify) {
             notifications.addCard('Log List Updated','','Info');
         }
+    }).always(() => {
+        $('*').css('cursor','')
     });
 };
 
 sc.server.loadLog = function(notify) {
+    $('*').css('cursor','wait')
     const contentType = 'application/json';
     const logFile = btoa($('select#logFiles').val())
     $.ajax({
@@ -259,6 +269,8 @@ sc.server.loadLog = function(notify) {
         if (notify) {
             notifications.addCard('Log Loaded','','Info');
         }
+    }).always(() => {
+        $('*').css('cursor','')
     });
 };
 
