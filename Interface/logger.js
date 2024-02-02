@@ -1,4 +1,5 @@
-if (sdAdmin === undefined) { const sdAdmin = {} };
+if (typeof sdAdmin === 'undefined') { sdAdmin = {} };
+
 sdAdmin.logger = {};
 
 sdAdmin.logger.listLogs = function(notify) {

@@ -20,8 +20,8 @@
 
 <div id="firewallRules" class="tab">
   <h1>SQL Server IP Firewall Rules</h1>
-  <button onclick="sc.server.refreshFirewallRules(true)">Refresh Firewall Rules</button>
-  <button onclick="sc.server.commitFirewallRules()">Commit Firewall Rules</button>
+  <button id='firewallRefreshBtn' onclick="sdAdmin.firewallMgr.refreshFirewallRules(true)">Refresh Firewall Rules</button>
+  <button id='firewallCommitBtn' onclick="sdAdmin.firewallMgr.commitFirewallRules()">Commit Firewall Rules</button>
   <table id="currentRules">
     <thead><th>Name</th><th>Start IP</th><th>End IP</th><th><button onclick="sc.service.DOMHandlers.addNewRule()">Add New Rule</button></th></thead>
     <tbody></tbody>
@@ -45,6 +45,7 @@
   <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js'></script>
   <script src="./script.js"></script>
   <script src="./server.js"></script>
+  <script src="./firewallrulemanager.js"></script>
   <script src="./logger.js"></script>
   <script src="./notifications/notifications.js"></script>
 </body>

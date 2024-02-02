@@ -1,4 +1,4 @@
-const sdAdmin = {}
+if (typeof sdAdmin === 'undefined') { sdAdmin = {} };
 
 sdAdmin.togglePage = function(abc) {
     const btn = $(abc);
