@@ -1,10 +1,10 @@
+import CheckRequirements
 import os
 import json
 
 from Logger import Logger
 from FirewallRuleManager import FirewallRuleManager
 from SFTPUserManager import SFTPUserManager
-import CheckRequirements
 
 from azure.identity import InteractiveBrowserCredential
 from azure.keyvault.secrets import SecretClient
