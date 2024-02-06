@@ -122,4 +122,6 @@ $(document).ready(() => {
     sdAdmin.firewallMgr.refreshFirewallRules();
 
     sdAdmin.addEventHandlers();
+
+    setInterval(sdAdmin.firewallMgr.testFirewallChecksum,60000); // once per minute
 });

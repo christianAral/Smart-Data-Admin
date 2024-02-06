@@ -2,6 +2,22 @@ if (typeof sdAdmin === 'undefined') { sdAdmin = {} };
 
 sdAdmin.firewallMgr = {};
 
+sdAdmin.firewallMgr.testFirewallChecksum = function() {
+    if (sdAdmin.firewallMgr.status == 'synced') {
+        const contentType = 'application/json';
+        $.ajax({
+            url:'/testFirewallChecksum',
+            method:'GET',
+            contentType:contentType,
+        }).done((data) => {
+            if (!data.synced) {
+                sdAdmin.firewallMgr.status = 'not synced';
+                notifications.addCard('Local Firewall Rules are out of sync!','Click "Refresh Firewall Rules" to pull the latest rules from the server.','Error');
+            }
+        });
+    }
+}
+
 sdAdmin.firewallMgr.refreshFirewallRules = function(notify) {
     $('*').css('cursor','wait')
     $('button#firewallRefreshBtn').prop('disabled', true);
@@ -16,6 +32,8 @@ sdAdmin.firewallMgr.refreshFirewallRules = function(notify) {
             .sort((a,b) => a.localeCompare(b)).join('');
 
         currRulesBody.html(bodyContent)
+
+        sdAdmin.firewallMgr.status = 'synced';
 
         if (notify) {
             notifications.addCard('Firewall Rules Refreshed','','Info');

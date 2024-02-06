@@ -13,6 +13,14 @@ def serve_index():
 def serve_static(filename):
     return send_from_directory('Interface', filename)
     
+@app.route('/testFirewallChecksum',methods=['GET'])
+def test_Firewall_Checksum():
+    try:
+        resp = SDAdmin.firewallMGR.test_firewall_checksum()
+        return jsonify(resp),200
+    except Exception as e:
+        return jsonify(e), 500
+
 @app.route('/refreshFirewallRules',methods=['GET'])
 def refresh_Firewall_Rules():
     try:

@@ -16,6 +16,21 @@ class FirewallRuleManager():
 
         self.sql = SqlManagementClient(credential, sqlConfig['SUBSCRIPTION_ID'])
 
+    def test_firewall_checksum(self):
+        server_firewall = list(self.sql.firewall_rules.list_by_server(
+                self.RESOURCE_GROUP_NAME, self.SERVER_NAME
+            ))
+        
+        checksum_curr = hash("\n".join(sorted([f"{rule.name}_{rule.start_ip_address}_{rule.end_ip_address}" for rule in self.curr_firewall])))
+        checksum_new  = hash("\n".join(sorted([f"{rule.name}_{rule.start_ip_address}_{rule.end_ip_address}" for rule in server_firewall])))
+
+        if checksum_curr == checksum_new:
+            status = {"synced":True}
+        else:
+            status = {"synced":False}
+
+        return status
+
     def get_firewall_rules(self,refresh=True):
         if refresh==True or not hasattr(self,'curr_firewall'):
             self.curr_firewall = list(self.sql.firewall_rules.list_by_server(
