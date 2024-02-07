@@ -13,6 +13,14 @@
     background-color: inherit;
 }
 
+body {
+    margin: 0;
+}
+
+#content {
+    margin: 8px;
+}
+
 .changedRow > td > input {
     color: var(--update-fg);
     background-color: var(--update-bg);
@@ -60,4 +68,14 @@ button:not(:disabled):hover {
 
 .logRowOdd {
     background-color: lightgrey
+}
+
+#timeToUpdate {
+    background-color: var(--update-bg);
+    color: var(--update-fg);
+    text-align: center;
+    height: 2em;
+    line-height: 2em;
+    display: none;
+    margin-bottom: 0.5em;
 }

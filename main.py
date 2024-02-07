@@ -1,4 +1,5 @@
 from SmartData import SmartDataAdmin
+from CheckVersion import CheckVersion
 from flask import Flask, jsonify, request, send_from_directory
 import webbrowser
 from threading import Timer
@@ -12,6 +13,13 @@ def serve_index():
 @app.route('/<path:filename>')
 def serve_static(filename):
     return send_from_directory('Interface', filename)
+    
+@app.route('/checkVersion',methods=['GET'])
+def check_version():
+    try:
+        return jsonify(CheckVersion()),200
+    except Exception as e:
+        return jsonify(e), 500    
     
 @app.route('/testFirewallChecksum',methods=['GET'])
 def test_Firewall_Checksum():

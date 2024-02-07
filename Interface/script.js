@@ -107,6 +107,21 @@ sdAdmin.createTableFromData = function(data, columnOrder) {
     return table;
 }
 
+sdAdmin.server = {
+    checkVersion: function() {
+        const contentType = 'application/json';
+        $.ajax({
+            url:'/checkVersion',
+            method:'GET',
+            contentType:contentType,
+        }).done((data) => {
+            if (!data) {
+                $('div#timeToUpdate').css('display','block');
+            }
+        })
+    }
+}
+
 $(document).ready(() => {
     let initialPage = 'firewallRules';
 
@@ -118,6 +133,8 @@ $(document).ready(() => {
 
     $('.tab').css({'display':'none'})
     tab.css({'display':'inline'})
+
+    sdAdmin.server.checkVersion();
 
     sdAdmin.firewallMgr.refreshFirewallRules();
 
