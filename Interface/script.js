@@ -15,7 +15,7 @@ sdAdmin.addEventHandlers = function() {
         {
             selector: 'button#sftpUserRefreshBtn',
             event:    'click',
-            function: sc.server.listSftpUsers
+            function: sdAdmin.sftpUserMgr.listSftpUsers
         },
         {
             selector: 'button#loadLogBtn',
