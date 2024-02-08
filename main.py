@@ -76,10 +76,16 @@ def get_sftp_users():
     except Exception as e:
         return jsonify(e), 500
     
-@app.route('/sftpmgr/<ARN_b64>',methods=['GET'])
-def get_sftp_user(ARN_b64):
+@app.route('/sftpmgr/secret',methods=['POST'])
+def get_sftp_user_password():
     try:
-        resp = SDAdmin.sftpMGR.get_sftp_user_password(ARN_b64)
+        data = request.json
+        resp = SDAdmin.sftpMGR.get_sftp_user_password(
+            ARN=data['ARN_b64'],
+            b64=True,
+            asLink=True,
+            passphrase=data['passphrase']
+        )
         return jsonify(resp),200
     except Exception as e:
         return jsonify(e), 500

@@ -2,6 +2,8 @@ import boto3
 import json
 import base64
 
+from onetimesecret import OneTimeSecret
+
 class SFTPUserManager():
     def __init__(self,access_key,secret_id) -> None:
         self._client = boto3.client(
@@ -10,17 +12,23 @@ class SFTPUserManager():
             aws_access_key_id=access_key,
             aws_secret_access_key=secret_id
         )
+        self.ots = OneTimeSecret()
 
     def get_sftp_user_info(self):
         allSecrets = self._list_secrets()
         sftpUserInfo = [self._get_secret_value(secret['ARN']) for secret in allSecrets]
         return sftpUserInfo
 
-    def get_sftp_user_password(self,ARN:str,b64:bool=True):
+    def get_sftp_user_password(self,ARN:str,b64:bool=True,asLink:bool=True,passphrase:str=None):
         if b64:
             ARN = base64.b64decode(ARN.encode()).decode()
         sftpUserInfo = self._get_secret_value(ARN,True)
-        return sftpUserInfo
+        
+        if asLink: # Feed this through OneTimeSecret
+            ots = self.ots.share(sftpUserInfo['Password'],passphrase)
+            return {'secret_url':ots['secret_url']}
+        else:
+            return {'Password':sftpUserInfo['Password']}
 
     def _list_secrets(self,NextToken=None):
         Filters =[{
