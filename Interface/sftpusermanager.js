@@ -28,7 +28,7 @@ sdAdmin.sftpUserMgr.createTable = function (data, tableContainer) {
     container.children().remove();
 
     const table = $(
-        "<table><tr><th>Name</th><th>HomeDirectory</th></tr></table>"
+        "<table><thead><tr><th>Name</th><th>HomeDirectory</th></tr></thead><tbody></tbody></table>"
     );
 
     data.sort(function (a, b) {
@@ -60,7 +60,7 @@ sdAdmin.sftpUserMgr.createTable = function (data, tableContainer) {
             row.addClass("logRowOdd");
         }
 
-        table.append(row);
+        table.find('tbody').append(row);
     }
     container.append(table);
 };
