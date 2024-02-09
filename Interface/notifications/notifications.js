@@ -1,19 +1,40 @@
-const notifications = {};
+const notifications = {
+    templates:{},
+    helperFn:{},
+    id:`n${generateID(8)}`
+};
 
-notifications.card = $(
-    '<div class="notification"><div class="notifHeader"><span class="notifTitle"></span><div class="notifHeaderRight"><span class="notifTime"></span><span class="notifClose" onclick="notifications.removeCard(this)">X</span></div></div><span class="notifBody"></span></div>'
+notifications.templates.card = $(
+    `<div class="notification">
+         <div class="notifHeader">
+             <span class="notifTitle"></span>
+             <div class="notifHeaderRight">
+                 <span class="notifTime"></span>
+                 <span class="notifClose">X</span>
+             </div>
+         </div>
+         <span class="notifBody"></span>
+     </div>`
 );
 
+notifications.templates.card.find('.notifClose').click(function() {
+    $(this).closest(".notification").remove();
+})
 
-$("body").append(
-    $(
-        '<div id="notifications"><div id="notifClearAll" onclick="notifications.clearNotifications()">Clear All Notifications</div></div>'
-    )
-);
-notifications.notificationsContainer = $("div#notifications").first();
+notifications.templates.container = $(
+    `<div id="${notifications.id}" class="notifications"><div id="notifClearAll">Clear All Notifications</div></div>`
+)
+
+notifications.templates.container.find('#notifClearAll').click(function() {
+    $(`#${notifications.id}>.notification`).remove()
+})
+
+$("body").append(notifications.templates.container);
+
+notifications.notificationsContainer = $(`div#${notifications.id}`).first();
 
 notifications.addCard = function(title, description, type) {
-    let newCard = notifications.card.clone(true);
+    let newCard = notifications.templates.card.clone(true);
 
     if (["Error", "Warning"].includes(type)) {
         newCard.addClass(`notifStatus${type}`);
@@ -25,14 +46,6 @@ notifications.addCard = function(title, description, type) {
     newCard.find(".notifBody").text(description);
 
     notifications.notificationsContainer.append(newCard);
-}
-
-notifications.removeCard = function(evt) {
-    $(evt).closest(".notification").remove();
-}
-
-notifications.clearNotifications = function() {
-    $('#notifications>.notification').remove()
 }
 
 function formatDate(date) {
@@ -55,4 +68,13 @@ function formatDate(date) {
         " " +
         strTime
     );
+}
+
+function generateID(N) {
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    var result = '';
+    for (var i = 0; i < N; i++) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return result;
 }
