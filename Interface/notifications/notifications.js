@@ -1,8 +1,26 @@
 const notifications = {
     templates:{},
-    helperFn:{},
-    id:`n${generateID(8)}`
+    helperFn:{
+        generateID: function(N) {
+            var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            var result = '';
+            for (var i = 0; i < N; i++) {
+                result += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            return result;
+        },
+        formatDate: function () {
+            const date = new Date();
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString().padStart(2, "0");
+            const day = date.getDate().toString().padStart(2, "0");
+            const timeString = date.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            return `${year}-${month}-${day} ${timeString}`;
+        }
+    }
 };
+
+notifications.id=`n${notifications.helperFn.generateID(8)}`;
 
 notifications.templates.card = $(
     `<div class="notification">
@@ -21,17 +39,15 @@ notifications.templates.card.find('.notifClose').click(function() {
     $(this).closest(".notification").remove();
 })
 
-notifications.templates.container = $(
+notifications.container = $(
     `<div id="${notifications.id}" class="notifications"><div id="notifClearAll">Clear All Notifications</div></div>`
 )
 
-notifications.templates.container.find('#notifClearAll').click(function() {
+notifications.container.find('#notifClearAll').click(function() {
     $(`#${notifications.id}>.notification`).remove()
 })
 
-$("body").append(notifications.templates.container);
-
-notifications.notificationsContainer = $(`div#${notifications.id}`).first();
+$("body").append(notifications.container);
 
 notifications.addCard = function(title, description, type) {
     let newCard = notifications.templates.card.clone(true);
@@ -42,39 +58,8 @@ notifications.addCard = function(title, description, type) {
         newCard.addClass("notifStatusInfo");
     }
     newCard.find(".notifTitle").text(title);
-    newCard.find(".notifTime").text(formatDate());
     newCard.find(".notifBody").text(description);
+    newCard.find(".notifTime").text(notifications.helperFn.formatDate());
 
-    notifications.notificationsContainer.append(newCard);
-}
-
-function formatDate(date) {
-    if (date === undefined) {
-        date = new Date();
-    }
-    var hours = date.getHours();
-    var minutes = date.getMinutes().toString().padStart(2, "0");
-    var seconds = date.getSeconds().toString().padStart(2, "0");
-    var ampm = hours >= 12 ? "PM" : "AM";
-    hours = hours % 12;
-    hours = hours ? hours : 12; // the hour '0' should be '12'
-    var strTime = hours + ":" + minutes + ":" + seconds + " " + ampm;
-    return (
-        date.getFullYear() +
-        "-" +
-        (date.getMonth() + 1).toString().padStart(2, "0") +
-        "-" +
-        date.getDate().toString().padStart(2, "0") +
-        " " +
-        strTime
-    );
-}
-
-function generateID(N) {
-    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    var result = '';
-    for (var i = 0; i < N; i++) {
-        result += characters.charAt(Math.floor(Math.random() * characters.length));
-    }
-    return result;
+    notifications.container.append(newCard);
 }
