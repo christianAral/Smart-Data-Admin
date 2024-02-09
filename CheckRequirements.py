@@ -1,7 +1,21 @@
 import os
 from sys import exit
 from pathlib import Path
-import pkg_resources
+try:
+    import pkg_resources
+except ModuleNotFoundError:
+    print("\nModuleNotFoundError: No module named 'pkg_resources'"
+        '\n\tIt looks like there might be something wrong '
+        'with your python installation. We just tried '
+        'importing plg_resources which is a part of '
+        "setuptools but it couldn't be found. Please "
+        'try running "pip install setuptools --force" '
+        'in a command prompt and then running the '
+        'script again!\n'
+    )
+    print("Press any key to exit...")
+    os.system("pause >nul")
+    exit()
 try: 
     from colorama import init, Fore, Back, Style
     init()
