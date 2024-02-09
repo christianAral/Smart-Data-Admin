@@ -3,7 +3,8 @@ from sys import exit
 from pathlib import Path
 import pkg_resources
 try: 
-    from colorama import Fore, Back, Style
+    from colorama import init, Fore, Back, Style
+    init()
 except:
     Fore = type("", (), {})()
     Back = type("", (), {})()
@@ -29,10 +30,10 @@ def CheckRequirements():
             errStyle = Back.RED + Fore.WHITE
 
             message = (errStyle +
-                       f"This function requires {', '.join(requirements)}. "
-                       f"To continue, please install them with one of the commands below:{Style.RESET_ALL}\n"
-                       f"    {errStyle}pip install -r {_REQUIREMENTS_STR!r}      {Style.RESET_ALL}\n"
-                       f"    {errStyle}conda install --file {_REQUIREMENTS_STR!r}{Style.RESET_ALL}")
+                       f'This function requires {", ".join(requirements)}. '
+                       f'To continue, please install them with one of the commands below:{Style.RESET_ALL}\n'
+                       f'    {errStyle}pip install -r "{_REQUIREMENTS_STR}"      {Style.RESET_ALL}\n'
+                       f'    {errStyle}conda install --file "{_REQUIREMENTS_STR}"{Style.RESET_ALL}')
 
             print(message,end="\n\n")
             print("Press any key to exit...")
