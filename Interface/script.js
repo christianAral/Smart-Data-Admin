@@ -123,6 +123,7 @@ sdAdmin.server = {
 }
 
 $(document).ready(() => {
+    window.notifications = new Notifications();
     let initialPage = 'firewallRules';
 
     let btn = $(`button[data-tab="${initialPage}"]`);
