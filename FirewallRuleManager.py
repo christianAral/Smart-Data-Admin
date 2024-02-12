@@ -1,3 +1,5 @@
+import json
+
 from azure.core.exceptions import HttpResponseError
 from azure.mgmt.sql import SqlManagementClient
 from azure.mgmt.sql.models import (
@@ -51,6 +53,32 @@ class FirewallRuleManager():
             self.updated_baseline = [r for r in self.curr_baseline.baseline_results]
         
         return self.curr_baseline
+    
+    def check_baseline_synced(self):
+        if self.curr_firewall == []:
+            self.get_firewall_rules()
+        if self.curr_baseline == []:
+            self.get_baseline_rules()
+
+        # Convert dictionaries to strings for comparison
+        firewall_dict = [{k: v for k, v in d.__dict__.items() if k in ['name', 'start_ip_address', 'end_ip_address']} for d in self.curr_firewall]
+        baseline_dict = [{'name':b.result[0],'start_ip_address':b.result[1],'end_ip_address':b.result[2]} for b in self.curr_baseline.baseline_results]
+
+        firewall_list = [json.dumps(d, sort_keys=True) for d in firewall_dict]
+        baseline_list = [json.dumps(d, sort_keys=True) for d in baseline_dict]
+
+        # Find unique dictionaries in each list
+        unique_in_firewall = [json.loads(d) for d in firewall_list if d not in baseline_list]
+        unique_in_baseline = [json.loads(d) for d in baseline_list if d not in firewall_list]
+
+        # Add "__onlyExistsIn" key to each dictionary
+        for d in unique_in_firewall:
+            d['__onlyExistsIn'] = 'firewall'
+        for d in unique_in_baseline:
+            d['__onlyExistsIn'] = 'baseline'
+
+        # Combine the lists and return
+        return unique_in_firewall + unique_in_baseline
     
     def set_baseline_rules(self):
         updateRules = [r.as_dict() for r in self.updated_baseline]
