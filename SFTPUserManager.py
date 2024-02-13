@@ -15,9 +15,13 @@ class SFTPUserManager():
         self.ots = OneTimeSecret()
 
     def get_sftp_user_info(self):
-        allSecrets = self._list_secrets()
-        sftpUserInfo = [self._get_secret_value(secret['ARN']) for secret in allSecrets]
-        return sftpUserInfo
+        allSecrets = self._batch_get_secret_value()
+        secretList = []
+        for secret in allSecrets:
+            thisSecret = {k:v for k,v in secret.items() if k in ('ARN','Name')}
+            thisSecret['HomeDirectory'] = json.loads(secret['SecretString'])['HomeDirectory']
+            secretList.append(thisSecret)
+        return secretList
 
     def get_sftp_user_password(self,ARN:str,b64:bool=True,asLink:bool=True,passphrase:str=None):
         if b64:
@@ -29,25 +33,25 @@ class SFTPUserManager():
             return {'secret_url':ots['secret_url']}
         else:
             return {'Password':sftpUserInfo['Password']}
-
-    def _list_secrets(self,NextToken=None):
+    
+    def _batch_get_secret_value(self,NextToken=None):
         Filters =[{
                     'Key': 'name',
                     'Values': ['SFTP']
                 }]
 
         if NextToken is not None:
-            resp = self._client.list_secrets(
+            resp = self._client.batch_get_secret_value(
                 NextToken=NextToken,
                 Filters=Filters
             )
         else:
-            resp = self._client.list_secrets(
+            resp = self._client.batch_get_secret_value(
                 Filters=Filters
             )
-        secretsList = resp['SecretList']
+        secretsList = resp['SecretValues']
         if "NextToken" in resp:
-            secretsList.extend(self._list_secrets(resp['NextToken']))
+            secretsList.extend(self._batch_get_secret_value(resp['NextToken']))
         
         return secretsList
     
