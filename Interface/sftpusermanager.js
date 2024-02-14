@@ -79,7 +79,7 @@ sdAdmin.sftpUserMgr.retrievePassword = function (ARN_b64) {
         contentType:contentType,
         data:JSON.stringify(payload)
     }).done((data) => {
-        notifications.addCard('Retrieved Password Available',data.secret_url,'Info');
+        notifications.addCard('Password Retrieved','OneTimeSecret.com Link','Info',data.secret_url);
     }).always(() => {
         $('*').css('cursor','')
         // $('button#firewallCommitBtn').prop('disabled', false);
