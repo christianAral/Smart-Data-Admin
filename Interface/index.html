@@ -6,55 +6,62 @@
   <title>Smart Data Admin Tool</title>
   <link rel="icon" href="./favicon.png">
   <link rel="stylesheet" href="./style.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/christianAral/notifications.js@v1.0.0/notifications.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/christianAral/notifications.js@v1.1.0/notifications.min.css">
 </head>
 
 <body>
-<div id="timeToUpdate">
-  There's a new Version of the Smart Data Admin tool! 
-  Click <a href="https://github.com/christianAral/Smart-Data-Admin/archive/refs/heads/main.zip" target="_blank" rel="noopener noreferrer">here</a> to download 
-  or <a href="https://github.com/christianAral/Smart-Data-Admin" target="_blank" rel="noopener noreferrer">here</a> to learn more.
-</div>
-<div id="content">
-<div id="pageSelector">
-  <button class="tabToggleBtn" data-tab="firewallRules">Firewall Rules</button>
-  <button class="tabToggleBtn" data-tab="sftpUserManagement">SFTP User Management</button>
-  <!-- <button class="tabToggleBtn" data-tab="alteryxUserManagement">Alteryx User Management</button> -->
-  <button class="tabToggleBtn" data-tab="logs">Logs</button>
-</div>
+  <div id="timeToUpdate">
+    There's a new Version of the Smart Data Admin tool!
+    Click <a href="https://github.com/christianAral/Smart-Data-Admin/archive/refs/heads/main.zip" target="_blank"
+      rel="noopener noreferrer">here</a> to download
+    or <a href="https://github.com/christianAral/Smart-Data-Admin" target="_blank" rel="noopener noreferrer">here</a> to
+    learn more.
+  </div>
+  <div id="content">
+    <div id="pageSelector">
+      <button class="tabToggleBtn" data-tab="firewallRules">Firewall Rules</button>
+      <button class="tabToggleBtn" data-tab="sftpUserManagement">SFTP User Management</button>
+      <!-- <button class="tabToggleBtn" data-tab="alteryxUserManagement">Alteryx User Management</button> -->
+      <button class="tabToggleBtn" data-tab="logs">Logs</button>
+    </div>
 
-<div id="firewallRules" class="tab">
-  <h1>SQL Server IP Firewall Rules</h1>
-  <button id='firewallRefreshBtn'>Refresh Firewall Rules</button>
-  <button id='firewallCommitBtn'>Commit Firewall Rules</button>
-  <table id="currentRules">
-    <thead><th>Name</th><th>Start IP</th><th>End IP</th><th><button id='newRuleBtn'>Add New Rule</button></th></thead>
-    <tbody></tbody>
-  </table>
-</div>
-<div id="sftpUserManagement" class="tab">
-  <h1>SFTP User Manager</h1>
-  <button id='sftpUserRefreshBtn'>Refresh SFTP User List</button>
-  <div id="sftpUsers"></div>
-</div>
-<!-- <div id="alteryxUserManagement" class="tab">
+    <div id="firewallRules" class="tab">
+      <h1>SQL Server IP Firewall Rules</h1>
+      <button id='firewallRefreshBtn'>Refresh Firewall Rules</button>
+      <button id='firewallCommitBtn'>Commit Firewall Rules</button>
+      <table id="currentRules">
+        <thead>
+          <th>Name</th>
+          <th>Start IP</th>
+          <th>End IP</th>
+          <th><button id='newRuleBtn'>Add New Rule</button></th>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div id="sftpUserManagement" class="tab">
+      <h1>SFTP User Manager</h1>
+      <button id='sftpUserRefreshBtn'>Refresh SFTP User List</button>
+      <div id="sftpUsers"></div>
+    </div>
+    <!-- <div id="alteryxUserManagement" class="tab">
   This is a placeholder alteryx user management tab
 </div> -->
-<div id="logs" class="tab">
-  <h1>Smart Data Admin Log Viewer</h1>
-  <select id="logFiles"></select>
-  <button id='loadLogBtn'>Load Log</button>
-  <div id="logContents"></div>
-</div>
+    <div id="logs" class="tab">
+      <h1>Smart Data Admin Log Viewer</h1>
+      <select id="logFiles"></select>
+      <button id='loadLogBtn'>Load Log</button>
+      <div id="logContents"></div>
+    </div>
 
+  </div>
   <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js'></script>
   <script src="./script.js"></script>
   <script src="./server.js"></script>
   <script src="./firewallrulemanager.js"></script>
   <script src="./sftpusermanager.js"></script>
   <script src="./logger.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/christianAral/notifications.js@v1.0.0/notifications.min.js"></script>
-</div>
+  <script src="https://cdn.jsdelivr.net/gh/christianAral/notifications.js@v1.1.0/notifications.min.js"></script>
 </body>
 
 </html>
