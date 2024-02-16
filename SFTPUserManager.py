@@ -3,9 +3,10 @@ import json
 import base64
 
 from onetimesecret import OneTimeSecret
+from Logger import Logger
 
 class SFTPUserManager():
-    def __init__(self,access_key,secret_id) -> None:
+    def __init__(self,access_key,secret_id,config,logger:Logger=None) -> None:
         self._client = boto3.client(
             'secretsmanager',
             region_name='us-east-1',
@@ -13,6 +14,8 @@ class SFTPUserManager():
             aws_secret_access_key=secret_id
         )
         self.ots = OneTimeSecret()
+        self.config = config
+        self.logger = logger
 
     def get_sftp_user_info(self):
         allSecrets = self._batch_get_secret_value()
@@ -71,3 +74,55 @@ class SFTPUserManager():
     
     def _describe_secret(self,SecretId):
         return self._client.describe_secret(SecretId=SecretId)
+    
+    def get_random_password(self,len:int=12):
+        resp = self._client.get_random_password(
+            PasswordLength=len,
+            # ExcludeCharacters='string',
+            # ExcludeNumbers=True|False,
+            # ExcludePunctuation=True|False,
+            # ExcludeUppercase=True|False,
+            # ExcludeLowercase=True|False,
+            # IncludeSpace=True|False,
+            # RequireEachIncludedType=True|False
+        )
+        return {'password':resp['RandomPassword']}
+    
+    def create_sftp_user(self,data):
+        SecretValue = {
+        "Password":data['password'],
+        "Role":self.config['Role'],
+        "HomeDirectory":data['homedir'],
+        "Policy": json.dumps({
+                'Version': '2012-10-17', 
+                'Statement': [
+                    {
+                        'Sid': 'AllowListingOfUserFolder', 
+                        'Action': ['s3:ListBucket'], 
+                        'Effect': 'Allow', 
+                        'Resource': ['arn:aws:s3:::${transfer:HomeBucket}'], 
+                        'Condition': {'StringLike': {'s3:prefix': ['${transfer:HomeFolder}/*', '${transfer:HomeFolder}']}}
+                    }, {
+                        'Sid': 'HomeDirObjectAccess', 
+                        'Effect': 'Allow', 
+                        'Action': ['s3:PutObject', 's3:GetObject', 's3:DeleteObjectVersion', 's3:DeleteObject', 's3:GetObjectVersion'], 
+                        'Resource': 'arn:aws:s3:::${transfer:HomeDirectory}*'
+                    }
+                ]
+            })
+        }
+
+
+        response = self._client.create_secret(
+            Name=data['username'],
+            SecretString=json.dumps(SecretValue),
+            Description=data['homedir']
+        )
+
+        if self.logger:
+            self.logger.log(
+                'sftpUserCreated',
+                f'Name: {data["username"]:<24} HomeDir: {data["homedir"]}'
+            )
+        
+        return response

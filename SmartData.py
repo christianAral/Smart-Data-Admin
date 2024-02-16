@@ -44,6 +44,12 @@ class SmartDataAdmin():
         sqlConfig = json.loads(self.kv.get_secret('firewallRuleManagerConfig').value)
         self.firewallMGR = FirewallRuleManager(self._credential,sqlConfig,self.logger)
 
-        sftpConfig = json.loads(self.kv.get_secret('awsSecretManagerCreds').value)
-        self.sftpMGR = SFTPUserManager(sftpConfig['ACCESS_KEY'],sftpConfig['SECRET_KEY'])
+        sftpCred = json.loads(self.kv.get_secret('awsSecretManagerCreds').value)
+        sftpConfig = json.loads(self.kv.get_secret('awsSecretManagerConfig').value)
+        self.sftpMGR = SFTPUserManager(
+            sftpCred['ACCESS_KEY'],
+            sftpCred['SECRET_KEY'],
+            sftpConfig,
+            self.logger
+        )
         

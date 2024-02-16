@@ -18,6 +18,11 @@ sdAdmin.addEventHandlers = function() {
             function: sdAdmin.sftpUserMgr.listSftpUsers
         },
         {
+            selector: 'button#sftpUserCreateBtn',
+            event:    'click',
+            function: sdAdmin.sftpUserMgr.createNewUserModal
+        },
+        {
             selector: 'button#loadLogBtn',
             event:    'click',
             function: sdAdmin.logger.loadLog

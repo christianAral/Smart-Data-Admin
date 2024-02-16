@@ -48,8 +48,8 @@ sdAdmin.sftpUserMgr.createTable = function (data, tableContainer) {
     for (let i = 0; i < data.length; i++) {
         let r = data[i];
         const row = $(`<tr id='${btoa(r.ARN)}'>
-                         <td>${r.Name}</td>
-                         <td>${r.HomeDirectory}</td>
+                         <td class='sftp-name'>${r.Name.slice(5)}</td>
+                         <td class='sftp-dir'>${r.HomeDirectory}</td>
                          <td><button onclick="sdAdmin.sftpUserMgr.retrievePassword('${btoa(r.ARN)}')">
                            Retrieve Password</button></td>
                          </tr>`);
@@ -84,4 +84,98 @@ sdAdmin.sftpUserMgr.retrievePassword = function (ARN_b64) {
         $('*').css('cursor','')
         // $('button#firewallCommitBtn').prop('disabled', false);
     });
+}
+
+sdAdmin.sftpUserMgr.createNewUserModal = function () {
+
+    // disable all other buttons
+    $('button:not([disabled]):not(.modal button)')
+        .addClass('disabledByModal')
+        .prop('disabled',true);
+
+    const dirs = [];
+    $('.sftp-dir').each((i, n) => {
+        if (!dirs.map((d) => d.toLowerCase()).includes(n.innerText.toLowerCase())) 
+            dirs.push(n.innerText);
+    });
+    dirs.sort();
+
+    const modal = $('<div id="sftpNewUSer">')
+        .css({'background-color': 'red'})
+        .addClass('modal')
+    const nameDiv = $('<div>').append($('<span>').text('Rule Name: '));
+    const dirDiv = $('<div>').append($('<span>').text('Home Directory: '));
+    const passDiv = $('<div>').append($('<span>').text('Password: '));
+    const btnDiv = $('<div id="modalBtnDiv">');
+    const nameInput = $('<input>')
+    const dirInput = $('<input list="existingSftpPathList">')
+    const datalist = $('<datalist id="existingSftpPathList">');
+    const passInput = $('<input type="password">')
+    dirs.forEach((d) => {
+        let opt = $('<option>').val(d);
+        datalist.append(opt);
+    })
+    const submitErrorDiv = $('<div>').text('name or directory are missing!');
+
+    const submitBtn = $('<button>')
+        .text('Submit')
+        .on('click',function(event) {
+            if (nameInput.val() == '' || dirInput.val() == '') {
+                submitErrorDiv.insertBefore(btnDiv);
+            } else {
+                let payload = {
+                    username:`SFTP/${nameInput.val()}`,
+                    password:passInput.val(),
+                    homedir:dirInput.val()
+                }
+
+
+                $('*').css('cursor','wait')
+                $('.modal button').prop('disabled', true);
+                const contentType = 'application/json';
+            
+                $.ajax({
+                    url:'/sftpmgr/create',
+                    method:'POST',
+                    contentType:contentType,
+                    data:JSON.stringify(payload)
+                }).done((data) => {
+                    notifications.addCard('New SFTP User Created',data.Name,'Info');
+                    sdAdmin.sftpUserMgr.modalCleanup(event);
+                }).fail((data) => {
+                    notifications.addCard('Something Went Wrong','Error creating SFTP user','error');
+                }).always(() => {
+                    $('*').css('cursor','')
+                    $('.modal button').prop('disabled', false);
+                });
+
+
+            }
+        })
+    const cancelBtn = $('<button>')
+        .text('Cancel')
+        .on('click',sdAdmin.sftpUserMgr.modalCleanup);
+
+    const modalParts = [
+        nameDiv.append(nameInput),
+        passDiv.append(passInput),
+        dirDiv.append([dirInput,datalist]),
+        btnDiv.append([submitBtn,cancelBtn])
+    ];
+
+    modal.append(modalParts);
+
+    $('#sftpUserManagement').find('#sftpNewUSer').remove();
+    $('#sftpUserManagement').append(modal);
+    $('body').css('overflow','hidden');
+}
+
+sdAdmin.sftpUserMgr.modalCleanup = function(event) {
+    $(event.target).closest('.modal').remove();
+    $('body').css('overflow','');
+
+    $('.disabledByModal')
+        .prop('disabled',false)
+        .removeClass('disabledByModal');
+
 }
