@@ -101,7 +101,7 @@ button:not(:disabled):hover {
 }
 
 .modal > div > input,
-.modal > div > button {
+.modal > div > .passBtn {
     float: right;
 }
 
