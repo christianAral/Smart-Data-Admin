@@ -101,16 +101,19 @@ sdAdmin.sftpUserMgr.createNewUserModal = function () {
     dirs.sort();
 
     const modal = $('<div id="sftpNewUSer">')
-        .css({'background-color': 'red'})
         .addClass('modal')
     const nameDiv = $('<div>').append($('<span>').text('Rule Name: '));
     const dirDiv = $('<div>').append($('<span>').text('Home Directory: '));
     const passDiv = $('<div>').append($('<span>').text('Password: '));
     const btnDiv = $('<div id="modalBtnDiv">');
-    const nameInput = $('<input>')
-    const dirInput = $('<input list="existingSftpPathList">')
+    const nameInput = $('<input>').css('width','15em');
+    const dirInput = $('<input list="existingSftpPathList">').css('width','15em');
     const datalist = $('<datalist id="existingSftpPathList">');
-    const passInput = $('<input type="password">')
+    const passInput = $('<input type="password">').css('width','13em');
+    const randPassBtn = $('<button>')
+        .text("!")
+        .css('width','2em')
+        .on('click',sdAdmin.sftpUserMgr.randPass);
     dirs.forEach((d) => {
         let opt = $('<option>').val(d);
         datalist.append(opt);
@@ -158,7 +161,7 @@ sdAdmin.sftpUserMgr.createNewUserModal = function () {
 
     const modalParts = [
         nameDiv.append(nameInput),
-        passDiv.append(passInput),
+        passDiv.append([randPassBtn,passInput]),
         dirDiv.append([dirInput,datalist]),
         btnDiv.append([submitBtn,cancelBtn])
     ];
@@ -178,4 +181,22 @@ sdAdmin.sftpUserMgr.modalCleanup = function(event) {
         .prop('disabled',false)
         .removeClass('disabledByModal');
 
+}
+
+
+sdAdmin.sftpUserMgr.randPass = function(event) {
+    // $('*').css('cursor','wait')
+    // $('button#sftpUserRefreshBtn').prop('disabled', true);
+    const contentType = 'application/json';
+    $.ajax({
+        url:'/sftpmgr/randpass',
+        method:'GET',
+        contentType:contentType,
+    }).done((data) => {
+        console.log(data)
+        $(event.target).siblings('input').val(data.password);
+    }).always(() => {
+        // $('*').css('cursor','')
+        // $('button#sftpUserRefreshBtn').prop('disabled', false);
+    });
 }

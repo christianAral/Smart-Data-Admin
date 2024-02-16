@@ -91,6 +91,8 @@ button:not(:disabled):hover {
     /* min-height: 20em; */
     padding: 1em;
     border-radius: 1em;
+    border: 0.2em solid black;
+    background-color: lightgray;
   }
 
 .modal > div {
@@ -98,7 +100,8 @@ button:not(:disabled):hover {
     margin: 0.5em 0;
 }
 
-.modal > div > input {
+.modal > div > input,
+.modal > div > button {
     float: right;
 }
 
