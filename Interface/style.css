@@ -100,8 +100,7 @@ button:not(:disabled):hover {
     margin: 0.5em 0;
 }
 
-.modal > div > input,
-.modal > div > .passBtn {
+.modal .rightAlign {
     float: right;
 }
 
