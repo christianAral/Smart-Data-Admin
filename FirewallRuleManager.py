@@ -8,8 +8,10 @@ from azure.mgmt.sql.models import (
     DatabaseVulnerabilityAssessmentRuleBaselineItem,
 )
 
+from Logger import Logger
+
 class FirewallRuleManager():
-    def __init__(self,credential,sqlConfig,logger) -> None:
+    def __init__(self,credential,sqlConfig,logger:Logger) -> None:
         self.RESOURCE_GROUP_NAME = sqlConfig['RESOURCE_GROUP_NAME']
         self.SERVER_NAME = sqlConfig['SERVER_NAME']
         self.curr_firewall = []
