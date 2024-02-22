@@ -126,3 +126,27 @@ class SFTPUserManager():
             )
         
         return response
+    
+    def update_sftp_user(self,data):
+        SecretId =  base64.b64decode(data['ARN_b64'].encode()).decode()
+        secret = self._client.get_secret_value(SecretId=SecretId)
+        secretJSON = json.loads(secret['SecretString'])
+
+        # Update Values of the secret
+        if data['password'] != '':
+            secretJSON['Password'] = data['password']    
+        secretJSON['HomeDirectory'] = data['homedir']
+
+        response = self._client.update_secret(
+            SecretId=SecretId,
+            SecretString=json.dumps(secretJSON),
+            Description=data['homedir']
+        )
+
+        if self.logger:
+            self.logger.log(
+                'sftpUserUpdated',
+                f'Name: {data["username"]}'
+            )
+        
+        return response

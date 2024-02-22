@@ -107,6 +107,15 @@ def create_sftp_user():
     except Exception as e:
         return jsonify(e), 500
     
+@app.route('/sftpmgr/update',methods=['POST'])
+def update_sftp_user():
+    try:
+        data = request.json
+        resp = SDAdmin.sftpMGR.update_sftp_user(data)
+        return jsonify(resp),200
+    except Exception as e:
+        return jsonify(e), 500
+    
 def open_browser():
     webbrowser.open_new('http://localhost:5000/')
 
