@@ -2,15 +2,14 @@ import os
 from sys import exit
 from pathlib import Path
 try:
-    import pkg_resources
+    from importlib.metadata import distributions
 except ModuleNotFoundError:
-    print("\nModuleNotFoundError: No module named 'pkg_resources'"
+    print("\nModuleNotFoundError: No module named 'importlib.metadata'"
         '\n\tIt looks like there might be something wrong '
         'with your python installation. We just tried '
-        'importing plg_resources which is a part of '
-        "setuptools but it couldn't be found. Please "
-        'try running "pip install setuptools --force" '
-        'in a command prompt and then running the '
+        'importing importlib.metadata which is a part of '
+        "Python standard library but it couldn't be found. Please "
+        'try updating your Python to 3.8 or higher and then running the '
         'script again!\n'
     )
     print("Press any key to exit...")
@@ -34,8 +33,7 @@ def CheckRequirements():
         requirements = [req.split('==')[0].lower() for req in reqs.read().split('\n')]
 
     # Get installed packages
-    installed_packages = pkg_resources.working_set
-    installed_packages_list = [i.key.lower() for i in installed_packages]
+    installed_packages_list = [d.name.lower() for d in distributions()]
 
     # Check if required package is installed
     for requirement in requirements:
@@ -53,8 +51,6 @@ def CheckRequirements():
             print("Press any key to exit...")
             os.system("pause >nul")
             exit()
-
-            # raise ImportError(message)
     print('Requirements Met')
 
 CheckRequirements()
