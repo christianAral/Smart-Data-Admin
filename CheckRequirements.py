@@ -30,14 +30,21 @@ def CheckRequirements():
     _REQUIREMENTS_PATH = Path(__file__).with_name("requirements.txt")
     _REQUIREMENTS_STR = str(_REQUIREMENTS_PATH).replace('\\','/')
     with open(_REQUIREMENTS_PATH,'r', encoding='utf-16') as reqs:
-        requirements = [req.split('==')[0].lower() for req in reqs.read().split('\n')]
+        lines = reqs.readlines()
+
+    requirements = []
+    for line in lines:
+        # Split on '==' or '>=' or '<=' or '!='
+        package = line.split('==')[0].split('>=')[0].split('<=')[0].split('!=')[0]
+        requirements.append(package.strip().lower())
+
 
     # Get installed packages
     installed_packages_list = [d.name.lower() for d in distributions()]
 
     # Check if required package is installed
     for requirement in requirements:
-        if requirement not in installed_packages_list:
+        if requirement != 'importlib' and requirement not in installed_packages_list:
             
             errStyle = Back.RED + Fore.WHITE
 
