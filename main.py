@@ -116,6 +116,39 @@ def update_sftp_user():
     except Exception as e:
         return jsonify(e), 500
     
+@app.route('/sftpmgr/delete',methods=['POST'])
+def delete_sftp_user():
+    try:
+        data = request.json
+        resp = SDAdmin.sftpMGR.delete_sftp_user(
+            ARN=data['ARN_b64'],
+            b64=True
+        )
+        return jsonify(resp),200
+    except Exception as e:
+        return jsonify(e), 500
+
+@app.route('/sftpmgr/undelete',methods=['POST'])
+def undelete_sftp_user():
+    try:
+        data = request.json
+        resp = SDAdmin.sftpMGR.undelete_sftp_user(
+            ARN=data['ARN_b64'],
+            b64=True
+        )
+        return jsonify(resp),200
+    except Exception as e:
+        return jsonify(e), 500
+
+@app.route('/sftpmgr/listdeleted',methods=['GET'])
+def get_deleted_sftp_user():
+    try:
+        resp = SDAdmin.sftpMGR.get_deleted_sftp_user()
+        return jsonify(resp),200
+    except Exception as e:
+        return jsonify(e), 500
+
+    
 def open_browser():
     webbrowser.open_new('http://localhost:5000/')
 

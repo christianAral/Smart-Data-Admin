@@ -58,6 +58,49 @@ class SFTPUserManager():
         
         return secretsList
     
+    def delete_sftp_user(self,ARN:str,b64:bool=True):
+        if b64:
+            ARN = base64.b64decode(ARN.encode()).decode()
+        resp = self._client.delete_secret(SecretId=ARN)
+
+        if self.logger:
+            self.logger.log(
+                'sftpUserDeleted',
+                f'ARN: {ARN}'
+            )
+
+        return resp
+    
+    def undelete_sftp_user(self,ARN:str,b64:bool=True):
+        if b64:
+            ARN = base64.b64decode(ARN.encode()).decode()
+        resp = self._client.restore_secret(SecretId=ARN)
+
+        if self.logger:
+            self.logger.log(
+                'sftpUserRestored',
+                f'ARN: {ARN}'
+            )
+
+        return resp
+    
+    def get_deleted_sftp_user(self):
+        delUsers = [u for u in self._list_deleted_secrets() if 'DeletedDate' in u.keys()]
+        return delUsers
+    
+    def _list_deleted_secrets(self):
+        Filters =[{
+                    'Key': 'name',
+                    'Values': ['SFTP']
+                }]
+
+        for page in self._client.get_paginator("list_secrets").paginate(
+            Filters=Filters,
+            IncludePlannedDeletion=True
+            ):
+            yield from page["SecretList"]
+        
+    
     def _get_secret_value(self,SecretId,inclPW:bool=False):
         secret = self._client.get_secret_value(SecretId=SecretId)
         secretJSON = json.loads(secret['SecretString'])
