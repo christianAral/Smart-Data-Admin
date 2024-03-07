@@ -108,3 +108,8 @@ button:not(:disabled):hover {
     display: flex;
     justify-content: space-around;
 }
+
+#deleteSftpUserBtn {
+    color: var(--del-fg);
+    background-color: var(--del-bg);
+}
