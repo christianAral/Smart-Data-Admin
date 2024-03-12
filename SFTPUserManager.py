@@ -121,12 +121,12 @@ class SFTPUserManager():
     def get_random_password(self,len:int=12):
         resp = self._client.get_random_password(
             PasswordLength=len,
-            # ExcludeCharacters='string',
+            ExcludeCharacters='"#$%&\'()*+,./:;<=>?@[\\]^`{|}~',
             # ExcludeNumbers=True|False,
             # ExcludePunctuation=True|False,
             # ExcludeUppercase=True|False,
             # ExcludeLowercase=True|False,
-            # IncludeSpace=True|False,
+            IncludeSpace=False
             # RequireEachIncludedType=True|False
         )
         return {'password':resp['RandomPassword']}
